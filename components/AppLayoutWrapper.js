@@ -26,6 +26,7 @@ export default function AppLayoutWrapper({ children }) {
   const {
     currentPath,
     navigate,
+    isAdminAuthenticated,
     toasts,
     removeToast,
     isInvoiceModalOpen,
@@ -67,6 +68,9 @@ export default function AppLayoutWrapper({ children }) {
   let activeContent = children;
   if (pathname === "/" || pathname === "") {
     activeContent = <LandingPage />;
+  } else if (!isAdminAuthenticated) {
+    // 100% GATED: ALL internal operations, desks, invoices, bills, and customers require authorized Google login
+    activeContent = <AdminControlsPage />;
   } else if (pathname === "/dashboard") {
     activeContent = <DashboardView />;
   } else if (pathname === "/invoices") {
@@ -94,7 +98,7 @@ export default function AppLayoutWrapper({ children }) {
 
       {/* Main Body with Sidebar & Content */}
       <div className="flex-1 flex w-full">
-        {!isLandingPage && <Sidebar />}
+        {!isLandingPage && isAdminAuthenticated && <Sidebar />}
 
         <main className={`flex-1 overflow-x-hidden ${isLandingPage ? "w-full" : "p-3 sm:p-5 lg:p-8"}`}>
           {/* Zero-delay instant display (no server recompile lag or unmounting lag) */}
@@ -135,13 +139,13 @@ export default function AppLayoutWrapper({ children }) {
         ))}
       </div>
 
-      {/* Global Interactive Modals (Loaded dynamically on-demand only when triggered) */}
-      {isInvoiceModalOpen && <CreateInvoiceModal />}
-      {isBillModalOpen && <CreateBillModal />}
-      {isCustomerModalOpen && <CustomerModal />}
-      {isPaymentModalOpen && <RecordPaymentModal />}
-      {isPreviewModalOpen && <DocumentPreviewModal />}
-      {isCustomerProfileOpen && <CustomerProfileModal />}
+      {/* Global Interactive Modals (Loaded dynamically on-demand only when authenticated) */}
+      {isAdminAuthenticated && isInvoiceModalOpen && <CreateInvoiceModal />}
+      {isAdminAuthenticated && isBillModalOpen && <CreateBillModal />}
+      {isAdminAuthenticated && isCustomerModalOpen && <CustomerModal />}
+      {isAdminAuthenticated && isPaymentModalOpen && <RecordPaymentModal />}
+      {isAdminAuthenticated && isPreviewModalOpen && <DocumentPreviewModal />}
+      {isAdminAuthenticated && isCustomerProfileOpen && <CustomerProfileModal />}
     </div>
   );
 }

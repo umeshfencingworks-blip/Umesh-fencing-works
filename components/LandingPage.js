@@ -24,30 +24,45 @@ import {
   Lock,
   Clock,
   X,
+  ShieldAlert,
+  Ban,
 } from "lucide-react";
 import { BUSINESS_DETAILS } from "@/lib/calculations";
 import { useUI } from "@/context/UIContext";
 
 export default function LandingPage() {
-  const { loginWithPasskey, navigate } = useUI();
+  const {
+    isAdminAuthenticated,
+    loginWithGoogle,
+    primaryAdminEmail,
+    unauthorizedEmailAttempt,
+    dismissUnauthorizedModal,
+    navigate,
+    showToast,
+  } = useUI();
 
-  // Passkey Modal State for Footer Ledger Access
-  const [showPasskeyModal, setShowPasskeyModal] = useState(false);
-  const [passkeyInput, setPasskeyInput] = useState("");
-  const [passkeyError, setPasskeyError] = useState("");
+  // Google Authentication State for Footer Ledger Access
+  const [showLedgerAuthModal, setShowLedgerAuthModal] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
-  const handlePasskeySubmit = (e) => {
-    e.preventDefault();
-    if (passkeyInput.trim() === "admin123") {
-      const success = loginWithPasskey("admin123");
+  const handleLedgerClick = () => {
+    if (isAdminAuthenticated) {
+      navigate("/admin-controls?tab=financial-ledger");
+    } else {
+      setShowLedgerAuthModal(true);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsSigningIn(true);
+    try {
+      const success = await loginWithGoogle();
       if (success) {
-        setShowPasskeyModal(false);
-        setPasskeyInput("");
-        setPasskeyError("");
+        setShowLedgerAuthModal(false);
         navigate("/admin-controls?tab=financial-ledger");
       }
-    } else {
-      setPasskeyError("Invalid passkey. Please enter the authorized access key.");
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
@@ -848,13 +863,9 @@ export default function LandingPage() {
           {/* Ledger Button */}
           <button
             type="button"
-            onClick={() => {
-              setPasskeyError("");
-              setPasskeyInput("");
-              setShowPasskeyModal(true);
-            }}
+            onClick={handleLedgerClick}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-[#FDE68A] text-xs font-bold transition-all shadow-xs cursor-pointer border border-[#B45309]"
-            title="Open Commercial Ledger (Passkey Required)"
+            title="Open Commercial Ledger (Authorized Google Account Required)"
           >
             <BookOpen className="w-3.5 h-3.5 text-[#FDE68A]" />
             <span>Ledger</span>
@@ -862,69 +873,139 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Passkey Entry Modal for Direct Ledger Access */}
-      {showPasskeyModal && (
+      {/* Google Authentication Modal for Commercial Ledger Access */}
+      {showLedgerAuthModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl border-2 border-[#0E1C2F] shadow-2xl max-w-sm w-full p-6 text-center space-y-4 animate-in fade-in zoom-in-95 duration-150 relative">
-            <button
-              type="button"
-              onClick={() => setShowPasskeyModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#667085] hover:text-[#0E1C2F] hover:bg-[#F2EFE8] transition-colors cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
+          {/* ACCESS DENIED POPUP MODAL (if unauthorized email attempted) */}
+          {unauthorizedEmailAttempt ? (
+            <div className="bg-white rounded-2xl border-2 border-red-500 shadow-2xl max-w-sm w-full p-6 text-center space-y-4 animate-in fade-in zoom-in-95 duration-150 relative">
+              <div className="w-14 h-14 rounded-full bg-red-100 border-2 border-red-500 mx-auto flex items-center justify-center text-red-600 shadow-sm">
+                <Ban className="w-7 h-7" />
+              </div>
 
-            <div className="w-12 h-12 rounded-xl bg-[#0E1C2F] border-2 border-[#B45309] mx-auto flex items-center justify-center text-[#FDE68A] shadow-md">
-              <BookOpen className="w-6 h-6" />
-            </div>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-red-950 font-serif">
+                  Access Denied
+                </h3>
+                <p className="text-xs font-bold text-red-600">
+                  You don&apos;t have access to this portal.
+                </p>
+                <p className="text-[11px] text-[#5A6A80] pt-0.5">
+                  Signed in as: <strong className="text-[#0E1C2F] font-mono break-all">{unauthorizedEmailAttempt}</strong>
+                </p>
+              </div>
 
-            <div className="space-y-1">
-              <h3 className="text-base font-bold text-[#0E1C2F] font-serif">
-                Commercial Ledger Access
-              </h3>
-              <p className="text-xs text-[#667085]">
-                Enter authorized passkey to open Umesh Fencing Works invoice &amp; bill ledger.
-              </p>
-            </div>
-
-            <form onSubmit={handlePasskeySubmit} className="space-y-3 pt-1">
-              <div>
-                <input
-                  type="password"
-                  placeholder="Enter passkey..."
-                  value={passkeyInput}
-                  onChange={(e) => {
-                    setPasskeyInput(e.target.value);
-                    if (passkeyError) setPasskeyError("");
-                  }}
-                  autoFocus
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCD7CD] focus:border-[#0E1C2F] text-xs font-mono tracking-wider outline-hidden text-[#0E1C2F] text-center bg-[#FBF9F5] focus:bg-white transition-all shadow-inner"
-                />
-                {passkeyError && (
-                  <p className="text-[11px] text-red-600 font-semibold mt-1.5 text-center">
-                    {passkeyError}
-                  </p>
-                )}
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-left text-xs text-amber-900 space-y-1">
+                <div className="font-bold flex items-center gap-1 text-amber-950 text-[11px]">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>Restricted Access</span>
+                </div>
+                <p className="text-[10px] text-amber-800 leading-snug">
+                  Only the proprietor account (<strong>{primaryAdminEmail || "umeshfencingworks@gmail.com"}</strong>) can access the management ledger.
+                </p>
               </div>
 
               <div className="flex gap-2 pt-1">
                 <button
-                  type="submit"
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-[#0E1C2F] hover:bg-[#1A3254] text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  type="button"
+                  onClick={() => {
+                    dismissUnauthorizedModal();
+                    handleGoogleSignIn();
+                  }}
+                  className="flex-1 py-2 px-3 rounded-xl bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-bold shadow-md transition-all cursor-pointer"
                 >
-                  <span>Unlock Ledger</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#FDE68A]" />
+                  Try Authorized Email
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowPasskeyModal(false)}
-                  className="py-2.5 px-3.5 rounded-xl bg-[#F2EFE8] hover:bg-[#E8E5DD] text-[#344054] text-xs font-semibold transition-all cursor-pointer"
+                  onClick={() => {
+                    dismissUnauthorizedModal();
+                    setShowLedgerAuthModal(false);
+                  }}
+                  className="py-2 px-3 rounded-xl bg-[#F2EFE8] hover:bg-[#E8E5DD] text-[#344054] text-xs font-semibold cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border-2 border-[#0E1C2F] shadow-2xl max-w-sm w-full p-6 text-center space-y-5 animate-in fade-in zoom-in-95 duration-150 relative">
+              <button
+                type="button"
+                onClick={() => setShowLedgerAuthModal(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-lg text-[#667085] hover:text-[#0E1C2F] hover:bg-[#F2EFE8] transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="w-14 h-14 rounded-full bg-[#0E1C2F] border-2 border-[#B45309] mx-auto flex items-center justify-center text-[#FDE68A] shadow-md">
+                <Lock className="w-7 h-7" />
+              </div>
+
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold text-[#0E1C2F] font-serif">
+                  Commercial Ledger &amp; Admin
+                </h3>
+                <p className="text-xs text-[#667085] leading-relaxed">
+                  Sign in with the authorized Google administrator account to access the Umesh Fencing Works commercial ledger.
+                </p>
+              </div>
+
+              {/* Google Sign In Button */}
+              <div className="space-y-3 pt-1">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={isSigningIn}
+                  className="w-full py-3 px-4 rounded-xl bg-white hover:bg-[#F8F9FA] text-[#0E1C2F] border-2 border-[#DCD7CD] hover:border-[#0E1C2F] text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-3 disabled:opacity-50 cursor-pointer group"
+                >
+                  {/* Google Official G Logo */}
+                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                  <span>{isSigningIn ? "Connecting to Google..." : "Sign In with Google"}</span>
+                </button>
+
+                <div className="bg-[#FBF9F5] border border-[#E8E5DD] rounded-xl p-3 text-[11px] text-[#5A6A80] text-left space-y-1">
+                  <div className="font-bold text-[#0E1C2F] flex items-center gap-1.5">
+                    <ShieldAlert className="w-3.5 h-3.5 text-[#B45309]" />
+                    <span>Authorized Administrator Account:</span>
+                  </div>
+                  <div className="text-[11px] font-mono text-[#B45309] font-bold break-all bg-white px-2 py-1 rounded border border-[#E8E5DD]">
+                    {primaryAdminEmail || "umeshfencingworks@gmail.com"}
+                  </div>
+                  <div className="text-[10px] text-[#667085] leading-snug">
+                    Any other Google account will be blocked with an access denied alert.
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowLedgerAuthModal(false)}
+                  className="w-full py-2 px-3 rounded-xl bg-[#F2EFE8] hover:bg-[#E8E5DD] text-[#344054] text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
               </div>
-            </form>
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>

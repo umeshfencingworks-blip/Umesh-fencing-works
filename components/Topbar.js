@@ -24,6 +24,7 @@ import {
   TrendingUp,
   Trash2,
   ShieldAlert,
+  Award,
 } from "lucide-react";
 
 export default function Topbar() {
@@ -58,21 +59,17 @@ export default function Topbar() {
     };
   }, [mobileMenuOpen]);
 
-  const navItems = [
-    { label: "Landing Portal", href: "/", icon: Home },
+  const adminSuiteItems = [
     { label: "Operational Desk", href: "/dashboard", icon: LayoutDashboard },
     { label: "GST Tax Invoices", href: "/invoices", icon: FileText, badge: "B2B" },
     { label: "Retail & Counter Bills", href: "/bills", icon: Receipt, badge: "POS" },
     { label: "Customer Registry", href: "/customers", icon: Users },
-  ];
-
-  const adminNavItems = [
     { label: "Admin Command", href: "/admin-controls", icon: ShieldAlert },
-    { label: "Customer Invoices/Bills", href: "/admin-controls?tab=customer-lookup", icon: Search },
-    { label: "Financial Ledger", href: "/admin-controls?tab=financial-ledger", icon: BookOpen },
-    { label: "Payment Inflows", href: "/admin-controls?tab=payments", icon: DollarSign },
-    { label: "Executive Snapshot", href: "/admin-controls?tab=snapshot", icon: TrendingUp },
-    { label: "Zero Out Entries", href: "/admin-controls?tab=danger-zone", icon: Trash2, danger: true },
+    { label: "Financial Ledger", href: "/admin-controls?tab=financial-ledger", tab: "financial-ledger", icon: BookOpen },
+    { label: "Customer Invoices/Bills", href: "/admin-controls?tab=customer-lookup", tab: "customer-lookup", icon: Search },
+    { label: "Payment Inflows", href: "/admin-controls?tab=payments", tab: "payments", icon: DollarSign },
+    { label: "Executive Snapshot", href: "/admin-controls?tab=snapshot", tab: "snapshot", icon: TrendingUp },
+    { label: "Zero Out Entries", href: "/admin-controls?tab=danger-zone", tab: "danger-zone", icon: Trash2, danger: true },
   ];
 
   return (
@@ -115,8 +112,8 @@ export default function Topbar() {
 
         {/* Right: Quick Actions & Mobile Hamburger */}
         <div className="flex items-center gap-1.5 sm:gap-2.5">
-          {isLanding ? (
-            /* Client-Facing Navbar on Home Page */
+          {!isAdminAuthenticated ? (
+            /* Unauthenticated Visitor Topbar (Public Only) */
             <>
               <nav className="hidden lg:flex items-center gap-5 text-xs font-semibold text-[#475467] mr-2">
                 <a href="#products" className="hover:text-[#0E1C2F] transition-colors">
@@ -151,6 +148,16 @@ export default function Topbar() {
                 <span>Get Quote</span>
               </a>
 
+              {/* Admin Sign In Button */}
+              <Link
+                href="/admin-controls"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-[#FDE68A] text-xs font-bold transition-all shadow-xs border border-[#B45309]"
+                title="Sign in with authorized Google account"
+              >
+                <Lock className="w-3.5 h-3.5 text-[#FDE68A]" />
+                <span>Admin Sign In</span>
+              </Link>
+
               {/* Mobile Menu Hamburger Toggle */}
               <button
                 type="button"
@@ -162,11 +169,25 @@ export default function Topbar() {
               </button>
             </>
           ) : (
-            /* Operational / Internal Billing Buttons */
+            /* Authenticated Admin Management Suite Topbar */
             <>
+              {isLanding && (
+                <nav className="hidden lg:flex items-center gap-4 text-xs font-semibold text-[#475467] mr-1">
+                  <a href="#products" className="hover:text-[#0E1C2F] transition-colors">
+                    Products
+                  </a>
+                  <a href="#specifications" className="hover:text-[#0E1C2F] transition-colors">
+                    Specifications
+                  </a>
+                  <a href="#contact" className="hover:text-[#0E1C2F] transition-colors">
+                    Contact
+                  </a>
+                </nav>
+              )}
+
               <button
                 onClick={openCreateBill}
-                className="btn flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-md bg-[#FBF9F5] hover:bg-[#F2EFE8] text-[#1C314D] border border-[#DCD7CD] text-xs font-semibold shadow-xs transition-colors shrink-0"
+                className="btn flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-md bg-[#FBF9F5] hover:bg-[#F2EFE8] text-[#1C314D] border border-[#DCD7CD] text-xs font-semibold shadow-xs transition-colors shrink-0 cursor-pointer"
                 title="Create Instant Counter Retail Bill"
               >
                 <Receipt className="w-3.5 h-3.5 text-[#B45309]" />
@@ -176,7 +197,7 @@ export default function Topbar() {
 
               <button
                 onClick={openCreateInvoice}
-                className="btn flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-md bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-semibold shadow-xs transition-colors border border-[#08121F] shrink-0"
+                className="btn flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-md bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-semibold shadow-xs transition-colors border border-[#08121F] shrink-0 cursor-pointer"
                 title="Create GST Tax Invoice (B2B)"
               >
                 <FileText className="w-3.5 h-3.5 text-[#FDE68A]" />
@@ -184,35 +205,23 @@ export default function Topbar() {
                 <span className="sm:hidden text-[11px]">+ Invoice</span>
               </button>
 
-              {/* Admin Access Indicator / Portal Button */}
-              {isAdminAuthenticated ? (
-                <div className="hidden sm:flex items-center gap-1.5 pl-2 border-l border-[#E8E5DD]">
-                  <Link
-                    href="/admin-controls"
-                    prefetch={true}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#E6ECF5] text-[#0E1C2F] hover:bg-[#D4E0F0] text-xs font-semibold transition-colors"
-                  >
-                    <Unlock className="w-3.5 h-3.5 text-[#166534]" />
-                    <span>Admin Active</span>
-                  </Link>
-                  <button
-                    onClick={logoutAdmin}
-                    className="text-[11px] text-[#991B1B] hover:underline px-1 py-0.5 cursor-pointer"
-                    title="Sign Out of Admin Session"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
+              <div className="flex items-center gap-1.5 pl-2 border-l border-[#E8E5DD]">
                 <Link
                   href="/admin-controls"
                   prefetch={true}
-                  className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[#F7F5F0] hover:bg-[#EFECE4] text-[#182230] text-xs font-semibold border border-[#DCD7CD] transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#E6ECF5] text-[#0E1C2F] hover:bg-[#D4E0F0] text-xs font-semibold transition-colors"
                 >
-                  <Lock className="w-3.5 h-3.5 text-[#B45309]" />
-                  <span>Admin Portal</span>
+                  <Unlock className="w-3.5 h-3.5 text-[#166534]" />
+                  <span>Admin Panel</span>
                 </Link>
-              )}
+                <button
+                  onClick={logoutAdmin}
+                  className="text-[11px] text-[#991B1B] hover:underline px-1 py-0.5 cursor-pointer font-bold"
+                  title="Sign Out of Admin Session"
+                >
+                  Sign Out
+                </button>
+              </div>
 
               {/* Mobile Drawer Hamburger Button */}
               <button
@@ -260,8 +269,8 @@ export default function Topbar() {
 
             {/* Drawer Navigation Links */}
             <div className="p-4 space-y-5 flex-1 overflow-y-auto">
-              {isLanding ? (
-                /* Landing Page Mobile Anchors */
+              {!isAdminAuthenticated ? (
+                /* Unauthenticated Mobile Visitor Menu (Public Only) */
                 <div className="space-y-4">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#667085] font-mono">
                     Explore Solutions
@@ -312,27 +321,31 @@ export default function Topbar() {
                     <button
                       onClick={() => {
                         setMobileMenuOpen(false);
-                        navigate("/admin-controls?tab=financial-ledger");
+                        navigate("/admin-controls");
                       }}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-[#F7F5F0] hover:bg-[#EFECE4] text-[#0E1C2F] border border-[#DCD7CD] text-xs font-semibold"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-[#F7F5F0] hover:bg-[#EFECE4] text-[#0E1C2F] border border-[#DCD7CD] text-xs font-semibold cursor-pointer"
                     >
-                      <BookOpen className="w-3.5 h-3.5 text-[#B45309]" />
-                      <span>Commercial Ledger</span>
+                      <Lock className="w-3.5 h-3.5 text-[#B45309]" />
+                      <span>Admin Sign In (Google Auth)</span>
                     </button>
                   </div>
                 </div>
               ) : (
-                /* Full Internal App Navigation for Mobile */
+                /* Authenticated Admin Management Suite: All Features Gated & Unified */
                 <div className="space-y-5">
-                  {/* Commercial Operations Group */}
                   <div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#667085] px-2 mb-2 font-mono">
-                      Operations Desk
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#B45309] px-2 mb-2 font-mono flex items-center justify-between">
+                      <span>Admin Management Portal</span>
+                      <span className="text-[9px] text-emerald-700 font-bold px-1.5 py-0.5 rounded bg-emerald-100">
+                        Authenticated
+                      </span>
                     </div>
                     <nav className="space-y-1">
-                      {navItems.map((item) => {
+                      {adminSuiteItems.map((item) => {
                         const Icon = item.icon;
-                        const active = pathname === item.href;
+                        const active =
+                          pathname === item.href ||
+                          (item.tab && pathname === "/admin-controls" && (currentPath || "").includes(`tab=${item.tab}`));
                         return (
                           <button
                             key={item.href}
@@ -341,14 +354,18 @@ export default function Topbar() {
                               setMobileMenuOpen(false);
                               navigate(item.href);
                             }}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-left transition-colors ${
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-left transition-colors cursor-pointer ${
                               active
-                                ? "bg-[#0E1C2F] text-white shadow-xs"
+                                ? item.danger
+                                  ? "bg-red-700 text-white shadow-xs"
+                                  : "bg-[#0E1C2F] text-white shadow-xs"
+                                : item.danger
+                                ? "text-red-700 hover:bg-red-50"
                                 : "text-[#344054] hover:bg-[#F4F5F7]"
                             }`}
                           >
                             <div className="flex items-center gap-2.5">
-                              <Icon className={`w-4 h-4 ${active ? "text-[#FDE68A]" : "text-[#667085]"}`} />
+                              <Icon className={`w-4 h-4 ${active ? (item.danger ? "text-white" : "text-[#FDE68A]") : item.danger ? "text-red-600" : "text-[#B45309]"}`} />
                               <span>{item.label}</span>
                             </div>
                             {item.badge && (
@@ -366,46 +383,19 @@ export default function Topbar() {
                     </nav>
                   </div>
 
-                  {/* Admin Control Group */}
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#B45309] px-2 mb-2 font-mono flex items-center justify-between">
-                      <span>Admin Control Room</span>
-                      <span className="text-[9px] text-[#854D0E] font-normal">
-                        {isAdminAuthenticated ? "Active" : "Gated"}
-                      </span>
-                    </div>
-                    <nav className="space-y-1">
-                      {adminNavItems.map((item) => {
-                        const Icon = item.icon;
-                        const active =
-                          (currentPath || "").includes(item.href) ||
-                          (item.href === "/admin-controls" && pathname === "/admin-controls" && !(currentPath || "").includes("tab="));
-                        return (
-                          <button
-                            key={item.href}
-                            type="button"
-                            onClick={() => {
-                              setMobileMenuOpen(false);
-                              navigate(item.href);
-                            }}
-                            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-left transition-colors ${
-                              active
-                                ? item.danger
-                                  ? "bg-red-700 text-white shadow-xs"
-                                  : "bg-[#0E1C2F] text-white shadow-xs"
-                                : item.danger
-                                ? "text-red-700 hover:bg-red-50"
-                                : "text-[#344054] hover:bg-[#F4F5F7]"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <Icon className={`w-3.5 h-3.5 ${active ? "text-[#FDE68A]" : item.danger ? "text-red-600" : "text-[#B45309]"}`} />
-                              <span>{item.label}</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </nav>
+                  {/* Public Landing Link */}
+                  <div className="pt-2 border-t border-[#E8E5DD]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/");
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#5A6A80] hover:bg-[#F4F5F7] transition-colors cursor-pointer"
+                    >
+                      <Home className="w-4 h-4 text-[#667085]" />
+                      <span>View Public Landing Portal</span>
+                    </button>
                   </div>
 
                   {/* Quick Creation Buttons */}
@@ -415,7 +405,7 @@ export default function Topbar() {
                         setMobileMenuOpen(false);
                         openCreateBill();
                       }}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#FBF9F5] hover:bg-[#F2EFE8] text-[#1C314D] border border-[#DCD7CD] text-xs font-bold"
+                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#FBF9F5] hover:bg-[#F2EFE8] text-[#1C314D] border border-[#DCD7CD] text-xs font-bold cursor-pointer"
                     >
                       <Receipt className="w-3.5 h-3.5 text-[#B45309]" />
                       <span>+ Rapid Counter Bill</span>
@@ -425,7 +415,7 @@ export default function Topbar() {
                         setMobileMenuOpen(false);
                         openCreateInvoice();
                       }}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-bold"
+                      className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-bold cursor-pointer"
                     >
                       <FileText className="w-3.5 h-3.5 text-[#FDE68A]" />
                       <span>+ GST Tax Invoice</span>
