@@ -19,8 +19,8 @@ const BUSINESS_DETAILS = {
   name: "Umesh Fencing Works",
   proprietor: "B. Umesh",
   tagline: "Industrial & Agricultural Fencing Solutions",
-  address: "NH-44 Bypass, Industrial Area, Anantapur - 515001, Andhra Pradesh",
-  phone: "+91 94402 85110",
+  address: "Plot No 5 Ground Floor Door:2-1-164; Sy No133/7 Rachanapalle Ananthapuramu",
+  phone: "+91 94408 57111",
   email: "umeshfencingworks@gmail.com",
   gstin: "37AABCU9603R1ZM",
   pan: "AABCU9603R",
@@ -30,7 +30,7 @@ const BUSINESS_DETAILS = {
   accountNumber: "38920194851",
   ifscCode: "SBIN0001234",
   branch: "Anantapur Main Branch",
-  upiId: "9440285110@sbi",
+  upiId: "9440857111@sbi",
 };
 
 // ------------------------------------------------------------------------

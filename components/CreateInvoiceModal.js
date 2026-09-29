@@ -7,6 +7,7 @@ import {
   formatINR,
   extractStateCode,
   AP_STATE_CODE,
+  INDIAN_STATES,
 } from "@/lib/calculations";
 import { saveDocument, getNextDocumentNumber } from "@/lib/db";
 import {
@@ -51,11 +52,11 @@ export default function CreateInvoiceModal() {
     d.setDate(d.getDate() + 15);
     return d.toISOString().split("T")[0];
   });
-  const [placeOfSupply, setPlaceOfSupply] = useState("Andhra Pradesh (37)");
+  const [placeOfSupply, setPlaceOfSupply] = useState("Andhra Pradesh");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [ewayBillNumber, setEwayBillNumber] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Bank Transfer");
-  const [notes, setNotes] = useState("Payment strictly within due date. Subject to Anantapur jurisdiction.");
+  const [notes, setNotes] = useState("Payment strictly within due date.");
 
   // Initial Payment options
   const [recordInitialPayment, setRecordInitialPayment] = useState(false);
@@ -91,9 +92,25 @@ export default function CreateInvoiceModal() {
     return customers.find((c) => c.id === selectedCustomerId) || null;
   }, [customers, selectedCustomerId]);
 
-  const customerStateCode = selectedCustomer
-    ? selectedCustomer.stateCode || extractStateCode(selectedCustomer.gstin)
-    : AP_STATE_CODE;
+  // Automatically sync Place of Supply when customer is selected
+  useEffect(() => {
+    if (selectedCustomer) {
+      const sName = selectedCustomer.state || "Andhra Pradesh";
+      setPlaceOfSupply(sName);
+    }
+  }, [selectedCustomer]);
+
+  const customerStateCode = useMemo(() => {
+    if (placeOfSupply) {
+      const match = placeOfSupply.match(/\((\d{2})\)/);
+      if (match) return match[1];
+      const found = INDIAN_STATES.find((s) => s.name.toLowerCase() === placeOfSupply.trim().toLowerCase());
+      if (found) return found.code;
+    }
+    return selectedCustomer
+      ? selectedCustomer.stateCode || extractStateCode(selectedCustomer.gstin)
+      : AP_STATE_CODE;
+  }, [placeOfSupply, selectedCustomer]);
 
   // Live Calculations
   const totals = useMemo(() => {
@@ -347,12 +364,17 @@ export default function CreateInvoiceModal() {
               </div>
               <div>
                 <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">Place of Supply</label>
-                <input
-                  type="text"
+                <select
                   value={placeOfSupply}
                   onChange={(e) => setPlaceOfSupply(e.target.value)}
-                  className="w-full px-2.5 py-1.5 border border-[#DCD7CD] rounded bg-[#F7F5F0]"
-                />
+                  className="w-full px-2 py-1.5 border border-[#DCD7CD] rounded bg-[#F7F5F0] text-xs font-semibold text-[#0E1C2F]"
+                >
+                  {INDIAN_STATES.map((s) => (
+                    <option key={s.code} value={s.name}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">Vehicle No.</label>

@@ -2,18 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useUI } from "@/context/UIContext";
-import { extractStateCode } from "@/lib/calculations";
+import { extractStateCode, INDIAN_STATES } from "@/lib/calculations";
 import { saveCustomer } from "@/lib/db";
 import { X, Building2, User, Phone, Mail, MapPin, CheckCircle } from "lucide-react";
-
-const INDIAN_STATES = [
-  { code: "37", name: "Andhra Pradesh" },
-  { code: "29", name: "Karnataka" },
-  { code: "36", name: "Telangana" },
-  { code: "33", name: "Tamil Nadu" },
-  { code: "27", name: "Maharashtra" },
-  { code: "07", name: "Delhi" },
-];
 
 export default function CustomerModal() {
   const { isCustomerModalOpen, closeCustomerModal, customerModalData, showToast } = useUI();
@@ -182,12 +173,12 @@ export default function CustomerModal() {
 
             <div>
               <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1 flex items-center justify-between">
-                <span>GSTIN</span>
-                <span className="text-[9px] text-[#B45309] font-mono">15-char code</span>
+                <span>GST Number <span className="text-[#B45309] font-normal lowercase">(optional)</span></span>
+                <span className="text-[9px] text-[#667085] font-mono">15-char code (Optional)</span>
               </label>
               <input
                 type="text"
-                placeholder="37AAACB4512C1Z8"
+                placeholder="37AAACB4512C1Z8 (Optional)"
                 maxLength={15}
                 value={gstin}
                 onChange={handleGstinChange}
@@ -197,27 +188,39 @@ export default function CustomerModal() {
 
             <div>
               <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">
-                State
+                State (Select from All States of India)
               </label>
-              <input
-                type="text"
+              <select
                 value={state}
-                onChange={(e) => setState(e.target.value)}
-                className="w-full px-3 py-2 border border-[#DCD7CD] rounded bg-white"
+                onChange={(e) => {
+                  const selectedName = e.target.value;
+                  setState(selectedName);
+                  const found = INDIAN_STATES.find((s) => s.name === selectedName);
+                  if (found) {
+                    setStateCode(found.code);
+                  }
+                }}
+                className="w-full px-3 py-2 border border-[#DCD7CD] rounded bg-white text-xs font-semibold text-[#0E1C2F]"
                 required
-              />
+              >
+                {INDIAN_STATES.map((s) => (
+                  <option key={s.code} value={s.name}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">
-                State Code (2 digits)
+                GST State Code
               </label>
               <input
                 type="text"
                 maxLength={2}
                 value={stateCode}
-                onChange={(e) => setStateCode(e.target.value)}
-                className="w-full px-3 py-2 border border-[#DCD7CD] rounded bg-white font-mono font-bold text-center"
+                readOnly
+                className="w-full px-3 py-2 border border-[#DCD7CD] rounded bg-[#F7F5F0] font-mono font-bold text-center text-[#0E1C2F]"
                 required
               />
             </div>

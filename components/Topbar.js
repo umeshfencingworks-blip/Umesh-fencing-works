@@ -134,13 +134,13 @@ export default function Topbar() {
 
               {/* Direct Factory Call CTA - The persistent action on mobile, tablet & desktop */}
               <a
-                href="tel:+919440285110"
+                href="tel:+919440857111"
                 className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
                 title="Call Umesh Fencing Works Factory Direct"
               >
                 <Phone className="w-3.5 h-3.5 text-[#FDE68A]" />
                 <span className="text-xs font-semibold">Call</span>
-                <span className="hidden sm:inline font-mono text-[11px]">+91 94402 85110</span>
+                <span className="hidden sm:inline font-mono text-[11px]">+91 94408 57111</span>
               </a>
 
               {/* Get Quote CTA */}
@@ -190,7 +190,7 @@ export default function Topbar() {
 
               {/* Direct Factory Call CTA on mobile */}
               <a
-                href="tel:+919440285110"
+                href="tel:+919440857111"
                 className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
                 title="Call Umesh Fencing Works Factory Direct"
               >
@@ -326,11 +326,11 @@ export default function Topbar() {
 
                   <div className="pt-2 border-t border-[#E8E5DD] space-y-2">
                     <a
-                      href="tel:+919440285110"
+                      href="tel:+919440857111"
                       className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-[#0E1C2F] text-white text-xs font-bold shadow-xs"
                     >
                       <Phone className="w-3.5 h-3.5 text-[#FDE68A]" />
-                      <span>Call Factory: 94402 85110</span>
+                      <span>Call Factory: 94408 57111</span>
                     </a>
                     <button
                       onClick={() => {

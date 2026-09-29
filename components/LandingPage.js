@@ -222,7 +222,7 @@ export default function LandingPage() {
       `Hello Umesh Fencing Works,\n\nI would like a quotation for:\n• Product: ${selectedProduct}\n• Approximate Length: ${perimeterLength} feet\n• Name: ${clientName}\n• Phone: ${clientPhone}\n• Site Location: ${clientLocation || "Not specified"}\n\nPlease share your factory direct rates and availability.`
     );
 
-    const whatsappUrl = `https://wa.me/919440285110?text=${message}`;
+    const whatsappUrl = `https://wa.me/919440857111?text=${message}`;
     window.open(whatsappUrl, "_blank");
     setInquirySent(true);
   };
@@ -282,15 +282,15 @@ export default function LandingPage() {
             </a>
 
             <a
-              href="tel:+919440285110"
+              href="tel:+919440857111"
               className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/25 transition-all flex items-center justify-center gap-2 backdrop-blur-xs"
             >
               <Phone className="w-4 h-4 text-[#FDE68A]" />
-              <span>Call Factory: +91 94402 85110</span>
+              <span>Call Factory: +91 94408 57111</span>
             </a>
 
             <a
-              href="https://wa.me/919440285110?text=Hi%20Umesh%20Fencing%20Works,%20I%20need%20a%20quotation%20for%20fencing%20materials."
+              href="https://wa.me/919440857111?text=Hi%20Umesh%20Fencing%20Works,%20I%20need%20a%20quotation%20for%20fencing%20materials."
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#86EFAC] font-bold text-xs sm:text-sm border border-[#25D366]/40 transition-all flex items-center justify-center gap-2"
@@ -716,7 +716,7 @@ export default function LandingPage() {
                   <input
                     type="tel"
                     required
-                    placeholder="e.g. 9440285110"
+                    placeholder="e.g. 9440857111"
                     value={clientPhone}
                     onChange={(e) => setClientPhone(e.target.value)}
                     className="w-full px-3 py-2 text-xs rounded-xl border border-[#DCD7CD] bg-white focus:outline-none focus:border-[#0E1C2F]"
@@ -791,10 +791,10 @@ export default function LandingPage() {
                     <div className="font-bold text-white">Proprietor Phones</div>
                     <div className="mt-0.5 space-y-0.5">
                       <a
-                        href="tel:+919440285110"
+                        href="tel:+919440857111"
                         className="block text-[#FDE68A] hover:underline font-mono font-bold"
                       >
-                        +91 94402 85110 (B. Umesh)
+                        +91 94408 57111 (B. Umesh)
                       </a>
                       <a
                         href="tel:+919490185110"

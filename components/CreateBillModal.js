@@ -6,6 +6,7 @@ import {
   calculateDocumentTotals,
   formatINR,
   AP_STATE_CODE,
+  INDIAN_STATES,
 } from "@/lib/calculations";
 import { saveDocument, getNextDocumentNumber } from "@/lib/db";
 import {
@@ -36,6 +37,7 @@ export default function CreateBillModal() {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("Local Counter Sale, Anantapur");
+  const [placeOfSupply, setPlaceOfSupply] = useState("Andhra Pradesh");
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [paymentReference, setPaymentReference] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
@@ -59,9 +61,16 @@ export default function CreateBillModal() {
     }
   }, [isBillModalOpen]);
 
+  const billStateCode = useMemo(() => {
+    const match = (placeOfSupply || "").match(/\((\d{2})\)/);
+    if (match) return match[1];
+    const found = INDIAN_STATES.find((st) => st.name.toLowerCase() === (placeOfSupply || "").trim().toLowerCase());
+    return found ? found.code : AP_STATE_CODE;
+  }, [placeOfSupply]);
+
   const totals = useMemo(() => {
-    return calculateDocumentTotals(items, AP_STATE_CODE);
-  }, [items]);
+    return calculateDocumentTotals(items, billStateCode);
+  }, [items, billStateCode]);
 
   if (!isBillModalOpen) return null;
 
@@ -128,8 +137,8 @@ export default function CreateBillModal() {
       gstin: "",
       billingAddress: customerAddress,
       shippingAddress: customerAddress,
-      state: "Andhra Pradesh",
-      stateCode: "37",
+      state: placeOfSupply.split(" (")[0] || "Andhra Pradesh",
+      stateCode: billStateCode,
     };
 
     const payload = {
@@ -155,7 +164,7 @@ export default function CreateBillModal() {
       issueDate: new Date().toISOString().split("T")[0],
       dueDate: new Date().toISOString().split("T")[0],
       paymentMethod: paymentMode,
-      placeOfSupply: "Andhra Pradesh (37)",
+      placeOfSupply,
       vehicleNumber,
       notes: "Point of Sale counter settlement. Cash/UPI verified.",
       initialPaymentAmount: totals.grandTotal,
@@ -206,7 +215,7 @@ export default function CreateBillModal() {
             <div className="text-xs font-bold text-[#182230] uppercase tracking-wider font-mono mb-2">
               Buyer / Counter Customer Details
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               <div>
                 <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">Customer Name / Farm</label>
                 <input
@@ -227,6 +236,20 @@ export default function CreateBillModal() {
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   className="w-full px-2.5 py-1.5 border border-[#DCD7CD] rounded bg-[#F7F5F0] font-mono"
                 />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">State / Place of Supply</label>
+                <select
+                  value={placeOfSupply}
+                  onChange={(e) => setPlaceOfSupply(e.target.value)}
+                  className="w-full px-2.5 py-1.5 border border-[#DCD7CD] rounded bg-[#F7F5F0] font-sans font-medium text-[#182230] focus:ring-1 focus:ring-[#8E2800] focus:border-[#8E2800]"
+                >
+                  {INDIAN_STATES.map((st) => (
+                    <option key={st.code} value={st.name}>
+                      {st.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">Vehicle / Tractor (Optional)</label>
