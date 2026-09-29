@@ -46,7 +46,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="app-sidebar no-print w-60 min-w-[240px] bg-[#FFFFFF] border-r border-[#E2E6EA] flex flex-col justify-between hidden md:flex h-[calc(100vh-64px)] sticky top-[64px] select-none">
+    <aside className="app-sidebar no-print w-60 min-w-[240px] bg-[#FFFFFF] border-r border-[#E2E6EA] flex flex-col justify-between hidden lg:flex h-[calc(100vh-64px)] sticky top-[64px] select-none">
       <div className="p-4 space-y-4 overflow-y-auto">
         {/* Navigation Group: Unified Admin Suite */}
         <div>

@@ -272,6 +272,18 @@ function AdminControlsContent() {
     };
   }, [selectedCustomerForHistory, selectedCustomerDocs]);
 
+  // Aggregate grand totals for Financial Ledger (Debit, Credit, Net Outstanding)
+  const ledgerTotals = useMemo(() => {
+    let totalDebit = 0;
+    let totalCredit = 0;
+    (ledger || []).forEach((entry) => {
+      totalDebit = Number((totalDebit + (Number(entry.debit) || 0)).toFixed(2));
+      totalCredit = Number((totalCredit + (Number(entry.credit) || 0)).toFixed(2));
+    });
+    const netOutstanding = Math.max(0, Number((totalDebit - totalCredit).toFixed(2)));
+    return { totalDebit, totalCredit, netOutstanding };
+  }, [ledger]);
+
   // Export customer statement as .csv
   const handleExportCustomerStatementCSV = (cust, docs, pays) => {
     const rows = [];
@@ -323,6 +335,32 @@ function AdminControlsContent() {
       await loginWithGoogle();
     } finally {
       setIsSigningIn(false);
+    }
+  };
+
+  const handleZeroOutSubmit = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (zeroOutKeyInput.trim() !== "admin123") {
+      setZeroOutError("Authorization Failed: Invalid Admin Portal Key. Confirmation aborted.");
+      return;
+    }
+    setZeroOutError("");
+    setZeroOutLoading(true);
+    try {
+      const res = await zeroOutPortalEntries({
+        adminKey: zeroOutKeyInput.trim(),
+        wipeCustomers,
+      });
+      showToast(res.message || "All portal entries have been completely zeroed out to ₹0.00!", "success");
+      setShowZeroOutModal(false);
+      setZeroOutKeyInput("");
+      setWipeCustomers(false);
+    } catch (err) {
+      console.error("Zero-out error:", err);
+      setZeroOutError(err.message || "Failed to zero out portal entries.");
+      showToast(err.message || "Error executing zero out.", "error");
+    } finally {
+      setZeroOutLoading(false);
     }
   };
 
@@ -1352,6 +1390,45 @@ function AdminControlsContent() {
       {/* 2. FINANCIAL LEDGER TAB */}
       {activeTab === "financial-ledger" && (
         <div className="space-y-4">
+          {/* Financial Ledger Summary Metric Banner */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs">
+              <div className="text-[10px] font-mono uppercase text-[#667085] tracking-wider font-bold">
+                Total Invoiced / Billed (Debit)
+              </div>
+              <div className="text-lg font-black text-[#0E1C2F] font-mono mt-1">
+                {formatINR(ledgerTotals.totalDebit)}
+              </div>
+              <div className="text-[10px] text-[#667085] mt-0.5">
+                Total commercial & retail goods supplied
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs">
+              <div className="text-[10px] font-mono uppercase text-emerald-700 tracking-wider font-bold">
+                Total Payments Received (Credit)
+              </div>
+              <div className="text-lg font-black text-emerald-700 font-mono mt-1">
+                {formatINR(ledgerTotals.totalCredit)}
+              </div>
+              <div className="text-[10px] text-[#667085] mt-0.5">
+                Total verified bank, cash & UPI inflows
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs">
+              <div className="text-[10px] font-mono uppercase text-[#B45309] tracking-wider font-bold">
+                Net Outstanding Receivable
+              </div>
+              <div className={`text-lg font-black font-mono mt-1 ${ledgerTotals.netOutstanding > 0 ? "text-amber-700" : "text-emerald-700"}`}>
+                {formatINR(ledgerTotals.netOutstanding)}
+              </div>
+              <div className="text-[10px] text-[#667085] mt-0.5">
+                {ledgerTotals.netOutstanding > 0 ? "Uncollected customer balance" : "Fully settled ledger • ₹0.00 due"}
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="relative w-full sm:w-80">
               <Search className="w-4 h-4 text-[#667085] absolute left-3 top-2.5" />
@@ -1360,7 +1437,7 @@ function AdminControlsContent() {
                 placeholder="Search ledger party, reference..."
                 value={ledgerSearch}
                 onChange={(e) => setLedgerSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-[#F7F5F0] border border-[#DCD7CD] rounded-md text-xs"
+                className="w-full pl-9 pr-3 py-2 bg-[#F7F5F0] border border-[#DCD7CD] rounded-md text-xs font-medium"
               />
             </div>
             <div className="text-xs text-[#667085] font-mono">
@@ -1424,7 +1501,33 @@ function AdminControlsContent() {
                       </tr>
                     ))}
                 </tbody>
+                {ledger.length > 0 && (
+                  <tfoot>
+                    <tr className="bg-[#0E1C2F] text-white font-mono font-bold text-xs border-t-2 border-[#B45309]">
+                      <td colSpan="4" className="py-3 px-3 uppercase text-[10px] tracking-wider text-[#FDE68A]">
+                        Financial Ledger Grand Totals ({ledger.length} Entries)
+                      </td>
+                      <td className="py-3 px-3 text-right text-amber-300 font-mono">
+                        {formatINR(ledgerTotals.totalDebit)}
+                      </td>
+                      <td className="py-3 px-3 text-right text-emerald-400 font-mono">
+                        {formatINR(ledgerTotals.totalCredit)}
+                      </td>
+                      <td colSpan="2" className="py-3 px-3 text-right text-[11px] font-mono text-slate-300">
+                        Balance Due: <span className="text-[#FDE68A] font-bold">{formatINR(ledgerTotals.netOutstanding)}</span>
+                      </td>
+                    </tr>
+                  </tfoot>
+                )}
               </table>
+
+              {ledger.length === 0 && (
+                <div className="py-12 px-4 text-center space-y-2">
+                  <BookOpen className="w-8 h-8 text-[#98A2B3] mx-auto opacity-40" />
+                  <p className="text-xs font-semibold text-[#475467]">Financial Ledger is clean and balanced at ₹0.00</p>
+                  <p className="text-[11px] text-[#667085]">Every GST tax invoice, retail bill, and payment receipt recorded will appear here with zero discrepancy.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

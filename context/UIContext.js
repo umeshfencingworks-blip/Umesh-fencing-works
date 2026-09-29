@@ -220,7 +220,7 @@ export function UIProvider({ children }) {
     return false;
   }, [showToast]);
 
-  // Admin Logout
+  // Admin Logout - Automatically redirects to customer web portal (landing page)
   const logoutAdmin = useCallback(async () => {
     try {
       await logoutAdminAuth();
@@ -231,7 +231,8 @@ export function UIProvider({ children }) {
         localStorage.removeItem("ufw_admin_auth");
         localStorage.removeItem("ufw_admin_email");
       }
-      showToast("Admin session signed out successfully.", "info");
+      showToast("Signed out of Admin Panel. Redirected to customer portal.", "info");
+      navigate("/");
     } catch (err) {
       console.error(err);
       setIsAdminAuthenticated(false);
@@ -240,9 +241,10 @@ export function UIProvider({ children }) {
         localStorage.removeItem("ufw_admin_auth");
         localStorage.removeItem("ufw_admin_email");
       }
-      showToast("Signed out of local admin session.", "info");
+      showToast("Signed out. Redirected to customer portal.", "info");
+      navigate("/");
     }
-  }, [showToast]);
+  }, [showToast, navigate]);
 
   // Modal Control Methods
   const openCreateInvoice = useCallback(() => setIsInvoiceModalOpen(true), []);

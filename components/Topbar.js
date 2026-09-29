@@ -81,14 +81,14 @@ export default function Topbar() {
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-[#C28E3A] overflow-hidden bg-white shrink-0 shadow-xs transition-transform group-hover:scale-105">
               <img src="/assets/umesh_logo.jpg" alt="Umesh Fencing Works" className="w-full h-full object-contain" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <div className="font-bold text-[#0E1C2F] text-xs sm:text-[15px] leading-tight flex items-center gap-1 sm:gap-1.5 font-sans">
-                <span className="truncate max-w-[145px] sm:max-w-none">Umesh Fencing Works</span>
+                <span className="whitespace-nowrap">Umesh Fencing Works</span>
                 <span className="text-[9px] sm:text-[10px] font-mono px-1 py-0.2 sm:px-1.5 sm:py-0.5 rounded bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A] font-semibold shrink-0">
                   AP-37
                 </span>
               </div>
-              <div className="hidden sm:block text-[11px] text-[#5A6A80] leading-none mt-0.5">
+              <div className="hidden sm:block text-[11px] text-[#5A6A80] leading-none mt-0.5 truncate max-w-[190px] md:max-w-[260px] lg:max-w-none">
                 {isLanding
                   ? "Manufacturer of Chainlink, Barbed Wire & Concrete Poles"
                   : "Invoice & Billing Ledger • B. Umesh"}
@@ -98,71 +98,74 @@ export default function Topbar() {
 
           {/* Status Badge (desktop) */}
           {isLanding ? (
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] text-[11px] font-medium border border-[#FDE68A]">
+            <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] text-[11px] font-medium border border-[#FDE68A] shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B45309] animate-pulse"></span>
               <span>Direct Manufacturer • Factory Rates</span>
             </div>
           ) : (
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-medium border border-[#BBF7D0]">
+            <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-medium border border-[#BBF7D0] shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse"></span>
               <span>Secure Local Financial Ledger • Active</span>
             </div>
           )}
         </div>
 
-        {/* Right: Quick Actions & Mobile Hamburger */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5">
+        {/* Right: Quick Actions & Mobile/Tablet Hamburger */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {!isAdminAuthenticated ? (
             /* Unauthenticated Visitor Topbar (Public Only) */
             <>
-              <nav className="hidden lg:flex items-center gap-5 text-xs font-semibold text-[#475467] mr-2">
-                <a href="#products" className="hover:text-[#0E1C2F] transition-colors">
+              {/* Desktop & Tablet Navigation Links */}
+              <nav className="hidden md:flex items-center gap-3 lg:gap-5 text-xs font-semibold text-[#475467] mr-1 lg:mr-2">
+                <a href="#products" className="hover:text-[#0E1C2F] transition-colors py-1">
                   Products
                 </a>
-                <a href="#specifications" className="hover:text-[#0E1C2F] transition-colors">
-                  Specifications
+                <a href="#specifications" className="hover:text-[#0E1C2F] transition-colors py-1">
+                  <span className="hidden lg:inline">Specifications</span>
+                  <span className="lg:hidden">Specs</span>
                 </a>
-                <a href="#about" className="hover:text-[#0E1C2F] transition-colors">
+                <a href="#about" className="hidden lg:inline hover:text-[#0E1C2F] transition-colors py-1">
                   Why Us
                 </a>
-                <a href="#contact" className="hover:text-[#0E1C2F] transition-colors">
-                  Contact &amp; Factory
+                <a href="#contact" className="hover:text-[#0E1C2F] transition-colors py-1">
+                  Contact
                 </a>
               </nav>
 
-              {/* Direct Factory Call CTA */}
+              {/* Direct Factory Call CTA - The persistent action on mobile, tablet & desktop */}
               <a
                 href="tel:+919440285110"
                 className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
                 title="Call Umesh Fencing Works Factory Direct"
               >
                 <Phone className="w-3.5 h-3.5 text-[#FDE68A]" />
-                <span className="hidden sm:inline">+91 94402 85110</span>
-                <span className="sm:hidden text-[11px]">Call</span>
+                <span className="text-xs font-semibold">Call</span>
+                <span className="hidden sm:inline font-mono text-[11px]">+91 94402 85110</span>
               </a>
 
+              {/* Get Quote CTA */}
               <a
                 href="#contact"
-                className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#B45309] hover:bg-[#92400E] text-white text-xs font-bold shadow-xs transition-colors shrink-0"
+                className="hidden sm:flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#B45309] hover:bg-[#92400E] text-white text-xs font-bold shadow-xs transition-colors shrink-0"
               >
                 <span>Get Quote</span>
               </a>
 
-              {/* Admin Sign In Button */}
+              {/* Admin Sign In Button - Shown on desktop (>=1024px); on mobile and tablet housed in hamburger drawer */}
               <Link
                 href="/admin-controls"
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-[#FDE68A] text-xs font-bold transition-all shadow-xs border border-[#B45309]"
+                className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-[#FDE68A] text-xs font-bold transition-all shadow-xs border border-[#B45309]"
                 title="Sign in with authorized Google account"
               >
                 <Lock className="w-3.5 h-3.5 text-[#FDE68A]" />
                 <span>Admin Sign In</span>
               </Link>
 
-              {/* Mobile Menu Hamburger Toggle */}
+              {/* Mobile & Tablet Menu Hamburger Toggle */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-1.5 rounded-lg text-[#0E1C2F] hover:bg-[#F2EFE8] transition-colors cursor-pointer ml-1"
+                className="lg:hidden p-1.5 sm:p-2 rounded-lg text-[#0E1C2F] hover:bg-[#F2EFE8] transition-colors cursor-pointer"
                 aria-label="Toggle navigation menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -172,7 +175,7 @@ export default function Topbar() {
             /* Authenticated Admin Management Suite Topbar */
             <>
               {isLanding && (
-                <nav className="hidden lg:flex items-center gap-4 text-xs font-semibold text-[#475467] mr-1">
+                <nav className="hidden xl:flex items-center gap-4 text-xs font-semibold text-[#475467] mr-1">
                   <a href="#products" className="hover:text-[#0E1C2F] transition-colors">
                     Products
                   </a>
@@ -185,27 +188,38 @@ export default function Topbar() {
                 </nav>
               )}
 
+              {/* Direct Factory Call CTA on mobile */}
+              <a
+                href="tel:+919440285110"
+                className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#1A3254] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
+                title="Call Umesh Fencing Works Factory Direct"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#FDE68A]" />
+                <span className="text-xs font-semibold">Call</span>
+              </a>
+
+              {/* Quick Administrative Creation Actions - Accessible on tablets (md) and desktops (lg) */}
               <button
                 onClick={openCreateBill}
-                className="btn flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-md bg-[#FBF9F5] hover:bg-[#F2EFE8] text-[#1C314D] border border-[#DCD7CD] text-xs font-semibold shadow-xs transition-colors shrink-0 cursor-pointer"
+                className="hidden md:flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-md bg-[#FBF9F5] hover:bg-[#F2EFE8] text-[#1C314D] border border-[#DCD7CD] text-xs font-semibold shadow-xs transition-colors shrink-0 cursor-pointer"
                 title="Create Instant Counter Retail Bill"
               >
                 <Receipt className="w-3.5 h-3.5 text-[#B45309]" />
-                <span className="hidden sm:inline">+ Retail Bill</span>
-                <span className="sm:hidden text-[11px]">+ Bill</span>
+                <span className="hidden lg:inline">+ Retail Bill</span>
+                <span className="lg:hidden">+ Bill</span>
               </button>
 
               <button
                 onClick={openCreateInvoice}
-                className="btn flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-md bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-semibold shadow-xs transition-colors border border-[#08121F] shrink-0 cursor-pointer"
+                className="hidden md:flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-md bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-semibold shadow-xs transition-colors border border-[#08121F] shrink-0 cursor-pointer"
                 title="Create GST Tax Invoice (B2B)"
               >
                 <FileText className="w-3.5 h-3.5 text-[#FDE68A]" />
-                <span className="hidden sm:inline">+ Tax Invoice</span>
-                <span className="sm:hidden text-[11px]">+ Invoice</span>
+                <span className="hidden lg:inline">+ Tax Invoice</span>
+                <span className="lg:hidden">+ Invoice</span>
               </button>
 
-              <div className="flex items-center gap-1.5 pl-2 border-l border-[#E8E5DD]">
+              <div className="hidden lg:flex items-center gap-1.5 pl-2 border-l border-[#E8E5DD]">
                 <Link
                   href="/admin-controls"
                   prefetch={true}
@@ -223,11 +237,11 @@ export default function Topbar() {
                 </button>
               </div>
 
-              {/* Mobile Drawer Hamburger Button */}
+              {/* Mobile & Tablet Drawer Hamburger Button */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-1.5 rounded-lg text-[#0E1C2F] hover:bg-[#F2EFE8] transition-colors cursor-pointer ml-1"
+                className="lg:hidden p-1.5 sm:p-2 rounded-lg text-[#0E1C2F] hover:bg-[#F2EFE8] transition-colors cursor-pointer"
                 aria-label="Toggle navigation drawer"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -237,9 +251,9 @@ export default function Topbar() {
         </div>
       </header>
 
-      {/* Mobile Navigation Drawer / Off-Canvas Sheet */}
+      {/* Mobile & Tablet Navigation Drawer / Off-Canvas Sheet */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex flex-col no-print animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col no-print animate-in fade-in duration-200">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-2xs"
