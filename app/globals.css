@@ -1,0 +1,301 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Crisp, Razor-Sharp Foundations */
+  --bg-app: #F8F9FA;             /* Crisp clean light surface */
+  --bg-surface: #FFFFFF;         /* Pure white card surface */
+  --bg-surface-soft: #F3F4F6;    /* Subtle contrast surface */
+  --bg-surface-muted: #E5E7EB;   /* Neutral recessed surface */
+  --bg-surface-hover: #F9FAFB;   /* Interactive hover */
+  
+  /* Deep Navy & Charcoal Ink */
+  --navy-950: #08121F;
+  --navy-900: #0E1C2F;           /* Primary contrast navy */
+  --navy-850: #14243B;           /* Primary buttons and active states */
+  --navy-800: #1C314D;
+  --navy-100: #E6ECF5;
+  --navy-50:  #F0F4FA;
+  
+  /* Typography Colors - High-Contrast Razor Sharp */
+  --text-main: #0E1C2F;          /* Deep crisp charcoal navy ink */
+  --text-body: #111827;          /* High-clarity dark body */
+  --text-muted: #4B5563;         /* Clear labels */
+  --text-dim: #6B7280;
+  
+  /* Accent Colors */
+  --amber-gold: #B45309;         /* Editorial gold/amber accent */
+  --amber-light: #FEF3C7;
+  --border-subtle: #D1D5DB;      /* Crisp high-contrast card border */
+  --border-medium: #9CA3AF;
+  
+  /* Status Colors */
+  --status-paid: #166534;
+  --status-paid-bg: #DCFCE7;
+  --status-unpaid: #991B1B;
+  --status-unpaid-bg: #FEE2E2;
+  --status-partial: #854D0E;
+  --status-partial-bg: #FEF3C7;
+  --status-overdue: #7F1D1D;
+  
+  /* Primary Font: Baloo Bhai 2 */
+  --font-sans: var(--font-baloo), 'Baloo Bhai 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', Consolas, monospace;
+  --sidebar-width: 240px;
+  --topbar-height: 64px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision; /* Crisp pixel-perfect font rendering on Windows */
+}
+
+/* Force crisp pixels on icons, images, and vectors */
+img, svg, canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  shape-rendering: geometricPrecision;
+}
+
+/* Crisp table and card borders */
+table {
+  border-collapse: collapse;
+}
+th, td {
+  border-color: #D1D5DB;
+}
+
+/* Classical Golden Border & Corner Filigree for Invoices */
+.ornate-gold-frame {
+  border: 2px solid #C28E3A;
+  position: relative;
+  background: #FFFFFF;
+}
+
+.gold-inner-frame {
+  border: 1px solid #DDBB72;
+  position: relative;
+  height: 100%;
+}
+
+.filigree-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  z-index: 10;
+}
+
+/* Instant Zero-Delay Route Display */
+.route-transition-enter {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Scrollbar refinement */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-surface-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Hide scrollbar for clean touch swipe horizontal bars */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ========================================================= */
+/* STRICT A4 PRINT ENGINE - DUAL-MODE DOCUMENT ISOLATION     */
+/* ========================================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 4mm;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
+    color: #0E1C2F !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Universal print resets */
+  .no-print,
+  button,
+  .app-sidebar,
+  .app-topbar,
+  header,
+  nav,
+  aside,
+  footer {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------- */
+  /* MODE 1: MODAL INVOICE / BILL PREVIEW IS ACTIVE            */
+  /* --------------------------------------------------------- */
+  body.modal-preview-active main {
+    display: none !important;
+  }
+
+  body.modal-preview-active,
+  body.modal-preview-active > div,
+  body.modal-preview-active .min-h-screen {
+    display: block !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  body.modal-preview-active .modal-backdrop-overlay {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    z-index: auto !important;
+  }
+
+  body.modal-preview-active .modal-backdrop-overlay > div {
+    display: block !important;
+    position: static !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: transparent !important;
+  }
+
+  body.modal-preview-active .modal-scroll-container,
+  body.modal-preview-active .modal-backdrop-overlay > div > div {
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+
+  /* Golden Filigree Corners & Borders Preservation */
+  #printable-document {
+    visibility: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 202mm !important;
+    min-height: 278mm !important;
+    max-height: none !important;
+    height: auto !important;
+    padding: 5mm !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    background: #FFFFFF !important;
+    border: 2px solid #C28E3A !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printable-document * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* --------------------------------------------------------- */
+  /* MODE 2: PAGE / CUSTOMER STATEMENT PRINTING                */
+  /* --------------------------------------------------------- */
+  body:not(.modal-preview-active) main {
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  body:not(.modal-preview-active) .min-h-screen {
+    min-height: auto !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  body:not(.modal-preview-active) #printable-customer-statement {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body:not(.modal-preview-active) #printable-customer-statement * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

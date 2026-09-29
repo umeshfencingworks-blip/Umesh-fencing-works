@@ -1,0 +1,181 @@
+# ==============================================================================
+# Comprehensive .gitignore for Next.js, React, Node.js, and Firebase Project
+# Umesh Fencing Works — Billing, Invoicing & Commercial Ledger Portal
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Dependencies & Package Managers
+# ------------------------------------------------------------------------------
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Logs & Debugging
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ------------------------------------------------------------------------------
+# 2. Next.js, React & Build Output
+# ------------------------------------------------------------------------------
+.next/
+out/
+build/
+dist/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Cache & Turbopack
+.turbo/
+.swc/
+.cache/
+.parcel-cache/
+
+# ------------------------------------------------------------------------------
+# 3. Environment Variables & Secrets (NEVER COMMIT SENSITIVE KEYS)
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.local
+.env*.local
+
+# Keep .env.example tracked as a template for team configuration
+! .env.example
+! .env.template
+
+# Security, SSL & Private Keys
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# Firebase Service Account Credentials & Private JSON Keys
+serviceAccountKey*.json
+service-account*.json
+firebase-adminsdk*.json
+google-services*.json
+GoogleService-Info*.plist
+secrets.json
+
+# ------------------------------------------------------------------------------
+# 4. Firebase CLI & Emulator Artifacts
+# ------------------------------------------------------------------------------
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+pubsub-debug.log*
+database-debug.log*
+hosting.*.cache
+
+# ------------------------------------------------------------------------------
+# 5. Operating System & Cloud Sync Artifacts (Windows, macOS, Linux, OneDrive)
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Linux
+*~
+.directory
+
+# OneDrive sync metadata
+.849C9593-D706-4E05-BB08-E5C0473110E2
+.sync
+
+# ------------------------------------------------------------------------------
+# 6. IDEs, Editors & Workspaces
+# ------------------------------------------------------------------------------
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# JetBrains (WebStorm, IntelliJ IDEA, PhpStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-text
+*.sublime-workspace
+*.sublime-project
+
+# Eclipse / NetBeans
+.project
+.classpath
+.settings/
+nbproject/
+
+# Vim / Emacs / Nano swap and backup files
+*.swp
+*.swo
+*.swn
+*.bak
+*.orig
+*~
+.#*
+\#*#
+
+# ------------------------------------------------------------------------------
+# 7. Testing, Coverage & Playwright/Cypress
+# ------------------------------------------------------------------------------
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+cypress/videos/
+cypress/screenshots/
+__snapshots__/
+
+# ------------------------------------------------------------------------------
+# 8. Linter, Formatting & Tool Caches
+# ------------------------------------------------------------------------------
+.eslintcache
+.stylelintcache
+.prettiercache
+.husky/_
+
+# ------------------------------------------------------------------------------
+# 9. Temporary Files, Dumps & Scratchpads
+# ------------------------------------------------------------------------------
+tmp/
+temp/
+*.tmp
+*.temp
+scratch/
+*.log
+*.dump

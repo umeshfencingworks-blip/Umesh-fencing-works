@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <defs>
+    <radialGradient id="emblemBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#14243B" />
+      <stop offset="100%" stop-color="#08121F" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="50%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Double Circular Ring -->
+  <circle cx="80" cy="80" r="76" fill="url(#emblemBg)" stroke="url(#goldGrad)" stroke-width="3" />
+  <circle cx="80" cy="80" r="70" fill="none" stroke="url(#goldGrad)" stroke-width="1.2" stroke-dasharray="2,2" />
+
+  <!-- Inner Fence & Mesh Motif -->
+  <!-- Fence Posts -->
+  <rect x="52" y="55" width="4" height="48" rx="2" fill="#FEF3C7" />
+  <rect x="78" y="48" width="4" height="55" rx="2" fill="url(#goldGrad)" />
+  <rect x="104" y="55" width="4" height="48" rx="2" fill="#FEF3C7" />
+
+  <!-- Diagonal Wire Mesh Lines -->
+  <g stroke="#94A3B8" stroke-width="1.5" opacity="0.85">
+    <line x1="45" y1="65" x2="115" y2="95" />
+    <line x1="45" y1="78" x2="115" y2="108" />
+    <line x1="45" y1="95" x2="115" y2="65" />
+    <line x1="45" y1="108" x2="115" y2="78" />
+  </g>
+
+  <!-- Barbed Wire Spikes -->
+  <g stroke="url(#goldGrad)" stroke-width="2">
+    <line x1="40" y1="58" x2="120" y2="58" />
+    <line x1="58" y1="54" x2="62" y2="62" />
+    <line x1="62" y1="54" x2="58" y2="62" />
+    <line x1="98" y1="54" x2="102" y2="62" />
+    <line x1="102" y1="54" x2="98" y2="62" />
+  </g>
+
+  <!-- Monogram UFW -->
+  <text x="80" y="124" text-anchor="middle" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="800" letter-spacing="3">UFW</text>
+  
+  <!-- Outer Arch Text -->
+  <path id="textArcTop" d="M 28 80 A 52 52 0 0 1 132 80" fill="none" />
+  <text font-family="'Plus Jakarta Sans', sans-serif" font-size="8.5" font-weight="700" fill="#FDE68A" letter-spacing="1.5">
+    <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
+      UMESH FENCING WORKS
+    </textPath>
+  </text>
+
+  <path id="textArcBottom" d="M 132 80 A 52 52 0 0 1 28 80" fill="none" />
+  <text font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="600" fill="#CBD5E1" letter-spacing="2">
+    <textPath href="#textArcBottom" startOffset="50%" text-anchor="middle">
+      ANANTAPUR • AP
+    </textPath>
+  </text>
+</svg>
