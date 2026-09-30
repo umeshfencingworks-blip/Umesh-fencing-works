@@ -1,6 +1,6 @@
 # Umesh Fencing Works — Invoice & Billing Ledger
 
-A modern, production-grade business operating system purpose-built for **Umesh Fencing Works** (Proprietor: B. Umesh, Anantapur, Andhra Pradesh).
+A modern, production-grade business operating system purpose-built for **Umesh Fencing Works** (Proprietor: C. Umesh, Anantapur, Andhra Pradesh).
 
 Built with **Next.js App Router**, **React**, **Tailwind CSS**, **Local-First Zero-Latency Engine (IndexedDB + In-Memory Caching)**, and **Cloud Firestore**.
 
@@ -10,7 +10,7 @@ Built with **Next.js App Router**, **React**, **Tailwind CSS**, **Local-First Ze
 
 - **Business Name:** Umesh Fencing Works
 - **Subtitle / Tagline:** Invoice & Billing Ledger (Chainlink, Barbed Wire, Concrete Poles & Solar Fencing)
-- **Proprietor:** B. Umesh
+- **Proprietor:** C. Umesh
 - **GSTIN:** `37AMQPU6044G1ZH` (Andhra Pradesh — State Code `37`)
 - **Facility Address:** Survey No. 87/9, Near HLC Canal, Bukkarayasamudram, Anantapur, Andhra Pradesh - 515701
 - **Official Remittance Account:**

@@ -14,6 +14,7 @@ const CustomerModal = dynamic(() => import("./CustomerModal"), { ssr: false });
 const RecordPaymentModal = dynamic(() => import("./RecordPaymentModal"), { ssr: false });
 const DocumentPreviewModal = dynamic(() => import("./DocumentPreviewModal"), { ssr: false });
 const CustomerProfileModal = dynamic(() => import("./CustomerProfileModal"), { ssr: false });
+const WhatsAppShareModal = dynamic(() => import("./WhatsAppShareModal"), { ssr: false });
 
 import LandingPage from "./LandingPage";
 const DashboardView = dynamic(() => import("./views/DashboardView"), { ssr: false });
@@ -35,6 +36,7 @@ export default function AppLayoutWrapper({ children }) {
     isPaymentModalOpen,
     isPreviewModalOpen,
     isCustomerProfileOpen,
+    isWhatsAppModalOpen,
   } = useUI();
   const pathname = (currentPath || "/").split("?")[0];
   const isLandingPage = pathname === "/" || pathname === "";
@@ -146,6 +148,7 @@ export default function AppLayoutWrapper({ children }) {
       {isAdminAuthenticated && isPaymentModalOpen && <RecordPaymentModal />}
       {isAdminAuthenticated && isPreviewModalOpen && <DocumentPreviewModal />}
       {isAdminAuthenticated && isCustomerProfileOpen && <CustomerProfileModal />}
+      {isAdminAuthenticated && isWhatsAppModalOpen && <WhatsAppShareModal />}
     </div>
   );
 }

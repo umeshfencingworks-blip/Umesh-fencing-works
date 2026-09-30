@@ -794,7 +794,7 @@ export default function LandingPage() {
                         href="tel:+919440857111"
                         className="block text-[#FDE68A] hover:underline font-mono font-bold"
                       >
-                        +91 94408 57111 (B. Umesh)
+                        +91 94408 57111 (C. Umesh)
                       </a>
                       <a
                         href="tel:+919490185110"

@@ -3,7 +3,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useUI } from "@/context/UIContext";
 import { formatINR } from "@/lib/calculations";
-import { voidDocument, deleteDocument } from "@/lib/db";
+import { deleteDocument } from "@/lib/db";
+import { WhatsAppIcon } from "../WhatsAppShareModal";
 import {
   FileText,
   Plus,
@@ -11,7 +12,6 @@ import {
   Filter,
   Eye,
   CreditCard,
-  Ban,
   Download,
   Printer,
   Calendar,
@@ -26,6 +26,7 @@ export default function InvoicesView({ autoOpenCreate = false }) {
     openPreview,
     openPaymentModal,
     openCustomerProfile,
+    openWhatsAppModal,
     showToast,
   } = useUI();
 
@@ -63,17 +64,6 @@ export default function InvoicesView({ autoOpenCreate = false }) {
     });
   }, [invoices, search, statusFilter]);
 
-  const handleVoid = async (doc) => {
-    if (confirm(`Are you sure you want to VOID invoice ${doc.documentNumber}? This action cannot be reversed.`)) {
-      try {
-        await voidDocument(doc.id, "Voided by user request");
-        showToast(`Invoice ${doc.documentNumber} marked as VOID.`, "info");
-      } catch (err) {
-        console.error(err);
-        showToast("Failed to void document.", "error");
-      }
-    }
-  };
 
   const handleDelete = async (doc) => {
     if (confirm(`Are you sure you want to permanently DELETE invoice ${doc.documentNumber}? This will remove it from all records.`)) {
@@ -141,7 +131,6 @@ export default function InvoicesView({ autoOpenCreate = false }) {
             <option value="unpaid">Unpaid Only</option>
             <option value="partially_paid">Partially Paid</option>
             <option value="paid">Fully Settled</option>
-            <option value="void">Voided</option>
           </select>
         </div>
       </div>
@@ -234,31 +223,33 @@ export default function InvoicesView({ autoOpenCreate = false }) {
                             onClick={() => openPreview(doc)}
                             className="p-1.5 rounded text-[#0E1C2F] hover:bg-[#EFECE4] transition-colors"
                             title="Print / Save PDF"
+                            aria-label="Print / Save PDF"
                           >
                             <Printer className="w-3.5 h-3.5" />
                           </button>
-                          {!isVoid && doc.balanceDue > 0 && (
+                          <button
+                            onClick={() => openWhatsAppModal(doc)}
+                            className="p-1.5 rounded text-[#25D366] hover:bg-emerald-50 transition-colors"
+                            title="Share via WhatsApp"
+                            aria-label="Share via WhatsApp"
+                          >
+                            <WhatsAppIcon className="w-3.5 h-3.5" />
+                          </button>
+                          {doc.balanceDue > 0 && (
                             <button
                               onClick={() => openPaymentModal(doc)}
                               className="p-1.5 rounded text-emerald-700 hover:bg-emerald-50 transition-colors"
                               title="Collect Payment"
+                              aria-label="Collect Payment"
                             >
                               <CreditCard className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          {!isVoid && (
-                            <button
-                              onClick={() => handleVoid(doc)}
-                              className="p-1.5 rounded text-amber-600 hover:bg-amber-50 transition-colors"
-                              title="Void Invoice"
-                            >
-                              <Ban className="w-3.5 h-3.5" />
                             </button>
                           )}
                           <button
                             onClick={() => handleDelete(doc)}
                             className="p-1.5 rounded text-rose-600 hover:bg-rose-50 transition-colors"
                             title="Delete Invoice Permanently"
+                            aria-label="Delete Invoice Permanently"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

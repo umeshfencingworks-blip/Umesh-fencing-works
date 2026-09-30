@@ -66,6 +66,9 @@ export function UIProvider({ children }) {
   const [isCustomerProfileOpen, setIsCustomerProfileOpen] = useState(false);
   const [customerProfileData, setCustomerProfileData] = useState(null);
 
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+  const [whatsAppDocument, setWhatsAppDocument] = useState(null);
+
 
   // Initialize DB and Firebase Auth Listener on Mount
   useEffect(() => {
@@ -208,7 +211,7 @@ export function UIProvider({ children }) {
       setIsAdminAuthenticated(true);
       setAdminUser({
         email: PRIMARY_ADMIN_EMAIL,
-        displayName: "Admin (B. Umesh)",
+        displayName: "Admin (C. Umesh)",
       });
       if (typeof window !== "undefined") {
         localStorage.setItem("ufw_admin_auth", "true");
@@ -287,6 +290,15 @@ export function UIProvider({ children }) {
   const closeCustomerProfile = useCallback(() => {
     setCustomerProfileData(null);
     setIsCustomerProfileOpen(false);
+  }, []);
+
+  const openWhatsAppModal = useCallback((document) => {
+    setWhatsAppDocument(document);
+    setIsWhatsAppModalOpen(true);
+  }, []);
+  const closeWhatsAppModal = useCallback(() => {
+    setWhatsAppDocument(null);
+    setIsWhatsAppModalOpen(false);
   }, []);
 
 
@@ -387,6 +399,10 @@ export function UIProvider({ children }) {
     customerProfileData,
     openCustomerProfile,
     closeCustomerProfile,
+    isWhatsAppModalOpen,
+    whatsAppDocument,
+    openWhatsAppModal,
+    closeWhatsAppModal,
   };
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;

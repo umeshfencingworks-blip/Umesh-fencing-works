@@ -3,7 +3,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useUI } from "@/context/UIContext";
 import { formatINR } from "@/lib/calculations";
-import { voidDocument, deleteDocument } from "@/lib/db";
+import { deleteDocument } from "@/lib/db";
+import { WhatsAppIcon } from "../WhatsAppShareModal";
 import {
   Receipt,
   Plus,
@@ -11,7 +12,6 @@ import {
   Printer,
   Eye,
   CreditCard,
-  Ban,
   Zap,
   Trash2,
 } from "lucide-react";
@@ -21,6 +21,7 @@ export default function BillsView({ autoOpenCreate = false }) {
     documents,
     openCreateBill,
     openPreview,
+    openWhatsAppModal,
     showToast,
   } = useUI();
 
@@ -50,17 +51,6 @@ export default function BillsView({ autoOpenCreate = false }) {
     });
   }, [bills, search]);
 
-  const handleVoid = async (doc) => {
-    if (confirm(`Void retail bill ${doc.documentNumber}?`)) {
-      try {
-        await voidDocument(doc.id, "Voided by counter staff");
-        showToast(`Bill ${doc.documentNumber} marked as VOID.`, "info");
-      } catch (err) {
-        console.error(err);
-        showToast("Error voiding bill.", "error");
-      }
-    }
-  };
 
   const handleDelete = async (b) => {
     if (confirm(`Permanently delete retail bill ${b.documentNumber}? This will remove it from all records.`)) {
@@ -194,22 +184,23 @@ export default function BillsView({ autoOpenCreate = false }) {
                             onClick={() => openPreview(b)}
                             className="p-1.5 rounded text-[#0E1C2F] hover:bg-[#EFECE4] transition-colors"
                             title="Print / Save PDF"
+                            aria-label="Print / Save PDF"
                           >
                             <Printer className="w-3.5 h-3.5" />
                           </button>
-                          {!isVoid && (
-                            <button
-                              onClick={() => handleVoid(b)}
-                              className="p-1.5 rounded text-amber-600 hover:bg-amber-50 transition-colors"
-                              title="Void Bill"
-                            >
-                              <Ban className="w-3.5 h-3.5" />
-                            </button>
-                          )}
+                          <button
+                            onClick={() => openWhatsAppModal(b)}
+                            className="p-1.5 rounded text-[#25D366] hover:bg-emerald-50 transition-colors"
+                            title="Share via WhatsApp"
+                            aria-label="Share via WhatsApp"
+                          >
+                            <WhatsAppIcon className="w-3.5 h-3.5" />
+                          </button>
                           <button
                             onClick={() => handleDelete(b)}
                             className="p-1.5 rounded text-rose-600 hover:bg-rose-50 transition-colors"
                             title="Delete Bill Permanently"
+                            aria-label="Delete Bill Permanently"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

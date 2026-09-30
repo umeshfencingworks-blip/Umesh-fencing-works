@@ -1237,15 +1237,7 @@ function AdminControlsContent() {
                                       <CreditCard className="w-3.5 h-3.5" />
                                     </button>
                                   )}
-                                  {!isVoid && (
-                                    <button
-                                      onClick={() => handleVoid(doc)}
-                                      className="p-1.5 rounded text-amber-600 hover:bg-amber-50 transition-colors"
-                                      title="Void Document"
-                                    >
-                                      <Ban className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
+
                                 </div>
                               </td>
                             </tr>
@@ -1658,14 +1650,7 @@ function AdminControlsContent() {
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </button>
-                          {d.status !== "void" && (
-                            <button
-                              onClick={() => handleVoid(d)}
-                              className="text-amber-600 hover:text-amber-800 text-[10px] font-bold"
-                            >
-                              Void
-                            </button>
-                          )}
+
                           <button
                             onClick={() => handleDeleteDoc(d)}
                             className="text-rose-600 hover:text-rose-800 text-[10px] font-bold"
@@ -1717,14 +1702,7 @@ function AdminControlsContent() {
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </button>
-                          {b.status !== "void" && (
-                            <button
-                              onClick={() => handleVoid(b)}
-                              className="text-amber-600 hover:text-amber-800 text-[10px] font-bold"
-                            >
-                              Void
-                            </button>
-                          )}
+
                           <button
                             onClick={() => handleDeleteDoc(b)}
                             className="text-rose-600 hover:text-rose-800 text-[10px] font-bold"

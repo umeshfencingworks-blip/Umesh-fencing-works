@@ -2,7 +2,7 @@
 
 > **Document Version:** 2.0.0  
 > **Target Audience:** System Architects, Developers, Database Administrators, and Business Auditors  
-> **Proprietor:** B. Umesh  
+> **Proprietor:** C. Umesh  
 > **Facility:** Survey No. 87/9, Near HLC Canal, Bukkarayasamudram, Anantapur, Andhra Pradesh - 515701  
 > **GSTIN:** `37AMQPU6044G1ZH` | **PAN:** `AMQPU6044G` | **State Code:** `37` (Andhra Pradesh)  
 
@@ -250,7 +250,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     entity_id TEXT NOT NULL,                   -- Target ID
     entity_number TEXT,                        -- Target document or receipt number
     details TEXT NOT NULL,                     -- Human-readable narrative description
-    user TEXT NOT NULL                         -- Authorized user (e.g. 'Admin (B. Umesh)')
+    user TEXT NOT NULL                         -- Authorized user (e.g. 'Admin (C. Umesh)')
 );
 ```
 

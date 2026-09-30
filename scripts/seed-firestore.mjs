@@ -17,7 +17,7 @@ const firebaseConfig = {
 
 const BUSINESS_DETAILS = {
   name: "Umesh Fencing Works",
-  proprietor: "B. Umesh",
+  proprietor: "C. Umesh",
   tagline: "Industrial & Agricultural Fencing Solutions",
   address: "Plot No 5 Ground Floor Door:2-1-164; Sy No133/7 Rachanapalle Ananthapuramu",
   phone: "+91 94408 57111",

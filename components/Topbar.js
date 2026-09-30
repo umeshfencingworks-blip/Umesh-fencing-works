@@ -91,7 +91,7 @@ export default function Topbar() {
               <div className="hidden sm:block text-[11px] text-[#5A6A80] leading-none mt-0.5 truncate max-w-[190px] md:max-w-[260px] lg:max-w-none">
                 {isLanding
                   ? "Manufacturer of Chainlink, Barbed Wire & Concrete Poles"
-                  : "Invoice & Billing Ledger • B. Umesh"}
+                  : "Invoice & Billing Ledger • C. Umesh"}
               </div>
             </div>
           </Link>
@@ -442,7 +442,7 @@ export default function Topbar() {
             {/* Drawer Footer */}
             <div className="p-4 border-t border-[#E8E5DD] bg-[#F8F9FA] space-y-2 text-xs">
               <div className="text-[11px] font-bold text-[#0E1C2F]">GSTIN: 37AMQPU6044G1ZH</div>
-              <div className="text-[10px] text-[#667085]">Proprietor: B. Umesh • State 37</div>
+              <div className="text-[10px] text-[#667085]">Proprietor: C. Umesh • State 37</div>
               {isAdminAuthenticated && (
                 <button
                   onClick={() => {
