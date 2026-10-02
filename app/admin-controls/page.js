@@ -67,7 +67,6 @@ function AdminControlsContent() {
     dismissUnauthorizedModal,
     primaryAdminEmail,
     loginWithGoogle,
-    loginWithPasskey,
     logoutAdmin,
     authorizedAdminEmails,
     firebaseConsoleUrl,
@@ -94,10 +93,6 @@ function AdminControlsContent() {
   };
   const [ledgerSearch, setLedgerSearch] = useState("");
   const [paymentSearch, setPaymentSearch] = useState("");
-
-  // Direct Admin Passkey states
-  const [passkeyInput, setPasskeyInput] = useState("");
-  const [passkeyError, setPasskeyError] = useState("");
 
   // Customer Invoices & Bills Lookup States
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
@@ -532,74 +527,16 @@ function AdminControlsContent() {
               <span>{isSigningIn ? "Connecting to Google..." : "Sign In with Google"}</span>
             </button>
 
-            {/* Direct Admin Passkey Entry (admin123) */}
-            <div className="relative flex py-1 items-center">
-              <div className="flex-grow border-t border-[#E8E5DD]"></div>
-              <span className="flex-shrink mx-2 text-[10px] font-mono uppercase text-[#667085] font-bold">
-                Or Direct Access Key
-              </span>
-              <div className="flex-grow border-t border-[#E8E5DD]"></div>
-            </div>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const success = loginWithPasskey(passkeyInput.trim());
-                if (!success) {
-                  setPasskeyError("Invalid key. Official admin key is admin123");
-                }
-              }}
-              className="space-y-2 text-left"
-            >
-              <div className="relative">
-                <Lock className="w-4 h-4 text-[#667085] absolute left-3 top-2.5" />
-                <input
-                  type="password"
-                  value={passkeyInput}
-                  onChange={(e) => {
-                    setPasskeyInput(e.target.value);
-                    setPasskeyError("");
-                  }}
-                  placeholder="Enter Admin Key (e.g. admin123)"
-                  className="w-full pl-9 pr-3 py-2 bg-[#FAF9F5] border border-[#DCD7CD] focus:border-[#B45309] rounded-xl text-xs font-mono tracking-wider focus:outline-hidden"
-                />
-              </div>
-              {passkeyError && (
-                <div className="text-[10px] text-red-600 font-semibold pl-1">
-                  {passkeyError}
-                </div>
-              )}
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 py-2 px-3 rounded-xl bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <Unlock className="w-3.5 h-3.5 text-[#FDE68A]" />
-                  <span>Enter Admin Room</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    loginWithPasskey("admin123");
-                  }}
-                  className="py-2 px-3 rounded-xl bg-amber-100 hover:bg-amber-200 text-[#B45309] border border-amber-300 text-xs font-bold transition-colors cursor-pointer shrink-0"
-                  title="Quick Fill & Enter with default passkey"
-                >
-                  <span>Quick Access</span>
-                </button>
-              </div>
-            </form>
-
             <div className="bg-[#FBF9F5] border border-[#E8E5DD] rounded-xl p-3 text-[11px] text-[#5A6A80] text-left space-y-1.5">
               <div className="font-bold text-[#0E1C2F] flex items-center gap-1.5">
                 <ShieldAlert className="w-3.5 h-3.5 text-[#B45309]" />
                 <span>Authorized Administrator Account:</span>
               </div>
               <div className="text-[11px] font-mono text-[#B45309] font-bold break-all bg-white px-2 py-1 rounded border border-[#E8E5DD]">
-                {primaryAdminEmail || "umeshfencingworks@gmail.com"} • Key: admin123
+                {primaryAdminEmail || "umeshfencingworks@gmail.com"}
               </div>
               <div className="text-[10px] text-[#667085] leading-snug">
-                Protected proprietor console with Google SSO or executive passkey.
+                Protected proprietor console. Only the authorized Google administrator account can sign in.
               </div>
             </div>
           </div>

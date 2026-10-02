@@ -220,23 +220,10 @@ export function UIProvider({ children }) {
     }
   }, [showToast]);
 
-  // Admin Passkey Login (Quick direct ledger access)
-  const loginWithPasskey = useCallback((passkey) => {
-    if (passkey === "admin123") {
-      setIsAdminAuthenticated(true);
-      setAdminUser({
-        email: PRIMARY_ADMIN_EMAIL,
-        displayName: "Admin (C. Umesh)",
-      });
-      if (typeof window !== "undefined") {
-        localStorage.setItem("ufw_admin_auth", "true");
-        localStorage.setItem("ufw_admin_email", PRIMARY_ADMIN_EMAIL);
-      }
-      showToast("Access Granted: Welcome to Umesh Fencing Works Ledger.", "success");
-      return true;
-    }
+  // Admin Passkey Login removed per user request - Google Auth is the sole access method
+  const loginWithPasskey = useCallback(() => {
     return false;
-  }, [showToast]);
+  }, []);
 
   // Admin Logout - Automatically redirects to customer web portal (landing page)
   const logoutAdmin = useCallback(async () => {
