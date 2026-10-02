@@ -31,6 +31,16 @@ const nextConfig = {
         destination: '/admin-controls?tab=snapshot',
         permanent: false,
       },
+      {
+        source: '/purchase-ledger',
+        destination: '/admin-controls?tab=purchase-ledger',
+        permanent: false,
+      },
+      {
+        source: '/purchases',
+        destination: '/admin-controls?tab=purchase-ledger',
+        permanent: false,
+      },
     ];
   },
 };

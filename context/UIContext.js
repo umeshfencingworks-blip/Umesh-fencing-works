@@ -12,6 +12,21 @@ import {
   getAuditLogsSync,
   getUnifiedFinancialLedgerSync,
   getDashboardMetricsSync,
+  getAllPurchasesSync,
+  savePurchase,
+  recordPurchasePayment,
+  deletePurchase,
+  getPurchaseSummary,
+  exportPurchaseLedgerCSV,
+  getMaterialsWithStockSync,
+  getScrapEntriesSync,
+  saveMaterial,
+  addMaterialStock,
+  deleteMaterial,
+  saveScrapEntry,
+  deleteScrapEntry,
+  getInventoryAndScrapSummary,
+  exportMaterialsAndScrapCSV,
   pushAllToFirestore,
   seedFirestoreDummyEntries,
 } from "@/lib/db";
@@ -341,6 +356,100 @@ export function UIProvider({ children }) {
   const auditLogs = getAuditLogsSync();
   const ledger = getUnifiedFinancialLedgerSync();
   const metrics = getDashboardMetricsSync();
+  const purchases = getAllPurchasesSync();
+  const purchaseSummary = getPurchaseSummary();
+  const materials = getMaterialsWithStockSync();
+  const scrapEntries = getScrapEntriesSync();
+  const inventorySummary = getInventoryAndScrapSummary();
+
+  const handleSavePurchase = useCallback(async (purchaseData) => {
+    try {
+      const res = await savePurchase(purchaseData);
+      showToast(`Purchase voucher ${res.purchaseNumber} saved successfully.`, "success");
+      return res;
+    } catch (err) {
+      showToast(err.message || "Failed to save purchase voucher", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  const handleRecordPurchasePayment = useCallback(async (purchaseId, paymentData) => {
+    try {
+      const res = await recordPurchasePayment(purchaseId, paymentData);
+      showToast(`Payment of ₹${paymentData.amount} recorded for purchase ${res.purchase?.purchaseNumber}.`, "success");
+      return res;
+    } catch (err) {
+      showToast(err.message || "Failed to record purchase payment", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  const handleDeletePurchase = useCallback(async (purchaseId) => {
+    try {
+      await deletePurchase(purchaseId);
+      showToast("Purchase voucher deleted.", "info");
+      return true;
+    } catch (err) {
+      showToast(err.message || "Failed to delete purchase", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  // Materials & Scrap Handlers
+  const handleSaveMaterial = useCallback(async (materialData) => {
+    try {
+      const res = await saveMaterial(materialData);
+      showToast(`Material "${res.name}" saved successfully.`, "success");
+      return res;
+    } catch (err) {
+      showToast(err.message || "Failed to save material", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  const handleAddMaterialStock = useCallback(async (materialId, qty, notes) => {
+    try {
+      const res = await addMaterialStock(materialId, qty, notes);
+      showToast(`Added ${qty} ${res.unit} to "${res.name}". Total in stock updated.`, "success");
+      return res;
+    } catch (err) {
+      showToast(err.message || "Failed to add stock", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  const handleDeleteMaterial = useCallback(async (materialId) => {
+    try {
+      await deleteMaterial(materialId);
+      showToast("Material removed from catalog.", "info");
+      return true;
+    } catch (err) {
+      showToast(err.message || "Failed to delete material", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  const handleSaveScrapEntry = useCallback(async (scrapData) => {
+    try {
+      const res = await saveScrapEntry(scrapData);
+      showToast(`Logged ${res.qty} ${res.unit} scrap for "${res.materialName}".`, "success");
+      return res;
+    } catch (err) {
+      showToast(err.message || "Failed to log scrap", "error");
+      throw err;
+    }
+  }, [showToast]);
+
+  const handleDeleteScrapEntry = useCallback(async (scrapId) => {
+    try {
+      await deleteScrapEntry(scrapId);
+      showToast("Scrap record deleted.", "info");
+      return true;
+    } catch (err) {
+      showToast(err.message || "Failed to delete scrap record", "error");
+      throw err;
+    }
+  }, [showToast]);
 
   const value = {
     currentPath,
@@ -355,6 +464,21 @@ export function UIProvider({ children }) {
     payments,
     auditLogs,
     ledger,
+    purchases,
+    purchaseSummary,
+    savePurchase: handleSavePurchase,
+    recordPurchasePayment: handleRecordPurchasePayment,
+    deletePurchase: handleDeletePurchase,
+    exportPurchaseLedgerCSV,
+    materials,
+    scrapEntries,
+    inventorySummary,
+    saveMaterial: handleSaveMaterial,
+    addMaterialStock: handleAddMaterialStock,
+    deleteMaterial: handleDeleteMaterial,
+    saveScrapEntry: handleSaveScrapEntry,
+    deleteScrapEntry: handleDeleteScrapEntry,
+    exportMaterialsAndScrapCSV,
     isAdminAuthenticated,
     adminUser,
     adminAuthLoading,

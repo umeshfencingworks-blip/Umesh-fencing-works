@@ -85,7 +85,11 @@ export default function AppLayoutWrapper({ children }) {
     pathname === "/admin-controls" ||
     pathname === "/ledger" ||
     pathname === "/payments" ||
-    pathname === "/business-snapshot"
+    pathname === "/business-snapshot" ||
+    pathname === "/purchase-ledger" ||
+    pathname === "/purchases" ||
+    pathname === "/scrap-materials" ||
+    pathname === "/materials-scrap"
   ) {
     activeContent = <AdminControlsPage />;
   }

@@ -230,7 +230,7 @@ export default function LandingPage() {
   return (
     <div className="w-full space-y-16 pb-20">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#0E1C2F] via-[#12233B] to-[#182C4A] text-white py-16 sm:py-20 px-4 sm:px-8 lg:px-12 border-b border-[#1C314D] shadow-sm">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#0E1C2F] via-[#12233B] to-[#182C4A] text-white py-14 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 border-b border-[#1C314D] shadow-sm">
         {/* Subtle decorative grid background */}
         <div
           className="absolute inset-0 opacity-10 pointer-events-none"
@@ -240,7 +240,7 @@ export default function LandingPage() {
           }}
         ></div>
 
-        <div className="relative max-w-5xl mx-auto text-center space-y-6">
+        <div className="relative max-w-6xl mx-auto text-center space-y-7">
           {/* Quality Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#FEF3C7] text-xs font-semibold tracking-wide backdrop-blur-xs">
             <span className="w-2 h-2 rounded-full bg-[#B45309] animate-pulse"></span>
@@ -338,7 +338,7 @@ export default function LandingPage() {
       </section>
 
       {/* Verified Manufacturing Facility Credentials Strip */}
-      <section className="max-w-6xl mx-auto px-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl border border-[#DCD7CD] shadow-sm p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
           {/* Facility Location */}
           <div className="flex items-start gap-3 p-3.5 bg-[#FBF9F5] rounded-xl border border-[#E8E5DD]">
@@ -409,7 +409,7 @@ export default function LandingPage() {
       </section>
 
       {/* Product & Manufacturing Solutions Grid */}
-      <section id="products" className="max-w-6xl mx-auto px-4 space-y-8 scroll-mt-20">
+      <section id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-20">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-[#DCD7CD] pb-4 gap-2">
           <div>
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#B45309] font-bold">
@@ -487,7 +487,7 @@ export default function LandingPage() {
       </section>
 
       {/* Technical Specifications Matrix */}
-      <section id="specifications" className="max-w-6xl mx-auto px-4 space-y-6 scroll-mt-20">
+      <section id="specifications" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 scroll-mt-20">
         <div className="border-b border-[#DCD7CD] pb-4">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#B45309] font-bold">
             Standard Manufacturing Parameters
@@ -533,7 +533,7 @@ export default function LandingPage() {
       </section>
 
       {/* Why Choose Umesh Fencing Works */}
-      <section id="about" className="max-w-6xl mx-auto px-4 space-y-6 scroll-mt-20">
+      <section id="about" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 scroll-mt-20">
         <div className="border-b border-[#DCD7CD] pb-4">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[#B45309] font-bold">
             The Umesh Advantage
@@ -587,7 +587,7 @@ export default function LandingPage() {
       </section>
 
       {/* Applications & Sectors Served */}
-      <section className="max-w-6xl mx-auto px-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#0E1C2F] text-white rounded-2xl p-6 sm:p-10 space-y-6 shadow-sm">
           <div>
             <span className="text-xs font-mono uppercase tracking-wider text-[#FDE68A] font-bold">
@@ -639,7 +639,7 @@ export default function LandingPage() {
       </section>
 
       {/* Interactive Quotation Calculator & Direct Factory Contact */}
-      <section id="contact" className="max-w-6xl mx-auto px-4 scroll-mt-20">
+      <section id="contact" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-20">
         <div className="bg-white rounded-2xl border-2 border-[#0E1C2F] shadow-lg overflow-hidden grid grid-cols-1 lg:grid-cols-12">
           {/* Left: Quick Quotation Form */}
           <div className="lg:col-span-7 p-6 sm:p-8 space-y-6">
@@ -788,19 +788,13 @@ export default function LandingPage() {
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-bold text-white">Proprietor Phones</div>
+                    <div className="font-bold text-white">Proprietor Phone</div>
                     <div className="mt-0.5 space-y-0.5">
                       <a
                         href="tel:+919440857111"
                         className="block text-[#FDE68A] hover:underline font-mono font-bold"
                       >
                         +91 94408 57111 (C. Umesh)
-                      </a>
-                      <a
-                        href="tel:+919490185110"
-                        className="block text-slate-300 hover:underline font-mono"
-                      >
-                        +91 94901 85110 (Works Support)
                       </a>
                     </div>
                   </div>
@@ -836,7 +830,7 @@ export default function LandingPage() {
       </section>
 
       {/* Client-Facing Footer */}
-      <footer className="max-w-6xl mx-auto px-4 pt-10 border-t border-[#DCD7CD] text-xs text-[#667085] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 border-t border-[#DCD7CD] text-xs text-[#667085] flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <div className="font-bold text-[#182230] text-sm">
             Umesh Fencing Works • Proprietor: {BUSINESS_DETAILS.proprietor}

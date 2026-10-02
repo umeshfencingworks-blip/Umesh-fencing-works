@@ -24,6 +24,7 @@ import {
 
 const COMMON_ITEMS = [
   { description: "Heavy Duty GI Chainlink Fencing (3-inch x 8 Gauge)", hsn: "7314", unit: "Mtrs", rate: 160 },
+  { description: "Hot-Dip Galvanized Iron Wire (8 Gauge / 4.0mm)", hsn: "7217", unit: "Kg", rate: 110 },
   { description: "High-Tensile Solar Perimeter Barbed Wire (2.5mm)", hsn: "7313", unit: "Mtrs", rate: 140 },
   { description: "Heavy Galvanized Barbed Wire (12x14 Gauge 2-Ply)", hsn: "7313", unit: "Kg", rate: 110 },
   { description: "Prestressed Concrete Fencing Poles (7 ft x 4x4 inch)", hsn: "6810", unit: "Nos", rate: 350 },
@@ -38,6 +39,7 @@ export default function CreateInvoiceModal() {
     isInvoiceModalOpen,
     closeCreateInvoice,
     customers,
+    materials,
     openCustomerModal,
     openPreview,
     showToast,
@@ -119,7 +121,34 @@ export default function CreateInvoiceModal() {
 
   if (!isInvoiceModalOpen) return null;
 
-  const handleAddItem = (preset = null) => {
+  const handleAddItem = (preset = null, fromMaterial = null) => {
+    if (fromMaterial) {
+      let normalizedUnit = "Kg";
+      const uLower = (fromMaterial.unit || "").toLowerCase();
+      if (uLower === "kg" || uLower === "kgs") normalizedUnit = "Kg";
+      else if (uLower === "mtrs" || uLower === "m" || uLower === "meters") normalizedUnit = "Mtrs";
+      else if (uLower === "nos" || uLower === "pcs" || uLower === "pieces") normalizedUnit = "Nos";
+      else if (uLower === "rolls" || uLower === "roll") normalizedUnit = "Rolls";
+      else if (uLower === "bundles" || uLower === "bundle") normalizedUnit = "Bundles";
+      else if (uLower === "bags" || uLower === "bag") normalizedUnit = "Bags";
+      else if (uLower === "ton") normalizedUnit = "Ton";
+
+      setItems((prev) => [
+        ...prev,
+        {
+          materialId: fromMaterial.id,
+          description: fromMaterial.name,
+          hsn: "7314",
+          qty: 1,
+          unit: normalizedUnit,
+          rate: Number(fromMaterial.unitCost) || 0,
+          discount: 0,
+          taxRate: 18,
+        },
+      ]);
+      return;
+    }
+
     if (preset) {
       setItems((prev) => [
         ...prev,
@@ -137,16 +166,49 @@ export default function CreateInvoiceModal() {
       setItems((prev) => [
         ...prev,
         {
+          materialId: "",
           description: "",
           hsn: "7314",
           qty: 1,
-          unit: "Mtrs",
+          unit: "Kg",
           rate: 0,
           discount: 0,
           taxRate: 18,
         },
       ]);
     }
+  };
+
+  const handleSelectMaterialForRow = (index, materialId) => {
+    if (!materialId) {
+      handleUpdateItem(index, "materialId", "");
+      return;
+    }
+    const mat = (materials || []).find((m) => m.id === materialId);
+    if (!mat) return;
+
+    let normalizedUnit = "Kg";
+    const uLower = (mat.unit || "").toLowerCase();
+    if (uLower === "kg" || uLower === "kgs") normalizedUnit = "Kg";
+    else if (uLower === "mtrs" || uLower === "m" || uLower === "meters") normalizedUnit = "Mtrs";
+    else if (uLower === "nos" || uLower === "pcs" || uLower === "pieces") normalizedUnit = "Nos";
+    else if (uLower === "rolls" || uLower === "roll") normalizedUnit = "Rolls";
+    else if (uLower === "bundles" || uLower === "bundle") normalizedUnit = "Bundles";
+    else if (uLower === "bags" || uLower === "bag") normalizedUnit = "Bags";
+    else if (uLower === "ton") normalizedUnit = "Ton";
+
+    setItems((prev) => {
+      const copy = [...prev];
+      const cur = copy[index] || {};
+      copy[index] = {
+        ...cur,
+        materialId: mat.id,
+        description: mat.name,
+        unit: normalizedUnit,
+        rate: cur.rate > 0 ? cur.rate : (Number(mat.unitCost) || 0),
+      };
+      return copy;
+    });
   };
 
   const handleUpdateItem = (index, field, value) => {
@@ -459,15 +521,45 @@ export default function CreateInvoiceModal() {
                     return (
                       <tr key={idx} className="hover:bg-[#FBF9F5]">
                         <td className="p-2 text-center font-mono font-bold">{idx + 1}</td>
-                        <td className="p-2">
+                        <td className="p-2 space-y-1">
                           <input
                             type="text"
-                            placeholder="Description of Goods/Services..."
+                            list={`inv-mat-list-${idx}`}
+                            placeholder="Type description or select from dropdown below..."
                             value={it.description}
-                            onChange={(e) => handleUpdateItem(idx, "description", e.target.value)}
-                            className="w-full px-2 py-1 border border-[#DCD7CD] rounded text-xs"
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              handleUpdateItem(idx, "description", val);
+                              const matched = (materials || []).find((m) => m.name.toLowerCase() === val.trim().toLowerCase());
+                              if (matched) {
+                                handleSelectMaterialForRow(idx, matched.id);
+                              }
+                            }}
+                            className="w-full px-2 py-1.5 border border-[#DCD7CD] rounded text-xs bg-white font-medium focus:outline-hidden focus:border-[#0E1C2F]"
                             required
                           />
+                          <datalist id={`inv-mat-list-${idx}`}>
+                            {(materials || []).map((m) => (
+                              <option key={m.id} value={m.name}>
+                                In-Stock: {m.inStock} {m.unit} • ₹{m.unitCost || 0}
+                              </option>
+                            ))}
+                          </datalist>
+
+                          {materials && materials.length > 0 && (
+                            <select
+                              value={it.materialId || ""}
+                              onChange={(e) => handleSelectMaterialForRow(idx, e.target.value)}
+                              className="w-full px-1.5 py-0.5 border border-[#E8E5DD] rounded text-[11px] bg-[#FAF9F5] text-[#344054] hover:border-[#0E1C2F] cursor-pointer"
+                            >
+                              <option value="">▼ Or select from Scrap &amp; Materials ({materials.length})...</option>
+                              {materials.map((m) => (
+                                <option key={m.id} value={m.id}>
+                                  {m.name} — In-Stock: {m.inStock} {m.unit} {m.unitCost ? `(₹${m.unitCost})` : ""}
+                                </option>
+                              ))}
+                            </select>
+                          )}
                         </td>
                         <td className="p-2">
                           <input
@@ -494,11 +586,13 @@ export default function CreateInvoiceModal() {
                             onChange={(e) => handleUpdateItem(idx, "unit", e.target.value)}
                             className="w-full px-1 py-1 border border-[#DCD7CD] rounded text-xs text-center"
                           >
+                            <option value="Kg">Kg</option>
                             <option value="Mtrs">Mtrs</option>
                             <option value="Nos">Nos</option>
-                            <option value="Kg">Kg</option>
-                            <option value="Bundles">Bundles</option>
                             <option value="Rolls">Rolls</option>
+                            <option value="Bundles">Bundles</option>
+                            <option value="Bags">Bags</option>
+                            <option value="Ton">Ton</option>
                             <option value="L.S.">L.S.</option>
                           </select>
                         </td>
@@ -556,14 +650,39 @@ export default function CreateInvoiceModal() {
               </table>
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleAddItem()}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F5F0] hover:bg-[#EFECE4] text-[#182230] border border-[#DCD7CD] rounded text-xs font-semibold"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ Add Line Item</span>
-            </button>
+            <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => handleAddItem()}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F7F5F0] hover:bg-[#EFECE4] text-[#182230] border border-[#DCD7CD] rounded text-xs font-semibold cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Line Item</span>
+              </button>
+
+              {materials && materials.length > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-[#667085] font-mono">Stock Picker:</span>
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const matId = e.target.value;
+                      if (!matId) return;
+                      const chosen = materials.find((m) => m.id === matId);
+                      if (chosen) handleAddItem(null, chosen);
+                    }}
+                    className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-[#B45309] border border-amber-300 rounded text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <option value="">+ Add Direct from Stock Materials...</option>
+                    {materials.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        + {m.name} (Stock: {m.inStock} {m.unit})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Section 4: Totals & Immediate Payment Settlement */}

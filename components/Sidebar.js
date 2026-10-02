@@ -15,6 +15,8 @@ import {
   TrendingUp,
   Trash2,
   Search,
+  Truck,
+  Boxes,
 } from "lucide-react";
 import { useUI } from "@/context/UIContext";
 
@@ -29,6 +31,8 @@ export default function Sidebar() {
     { label: "Customer Registry", href: "/customers", icon: Users },
     { label: "Admin Command", href: "/admin-controls", icon: ShieldAlert },
     { label: "Financial Ledger", href: "/admin-controls?tab=financial-ledger", tab: "financial-ledger", icon: BookOpen },
+    { label: "Purchase Ledger", href: "/admin-controls?tab=purchase-ledger", tab: "purchase-ledger", icon: Truck, badge: "EXP" },
+    { label: "Scrap & Materials", href: "/admin-controls?tab=scrap-materials", tab: "scrap-materials", icon: Boxes, badge: "STOCK" },
     { label: "Customer Lookup", href: "/admin-controls?tab=customer-lookup", tab: "customer-lookup", icon: Search },
     { label: "Payment Inflows", href: "/admin-controls?tab=payments", tab: "payments", icon: DollarSign },
     { label: "Executive Snapshot", href: "/admin-controls?tab=snapshot", tab: "snapshot", icon: TrendingUp },

@@ -18,7 +18,7 @@ Built with **Next.js App Router**, **React**, **Tailwind CSS**, **Local-First Ze
   - **Account Name:** Umesh fencing works
   - **Account Number:** `128511010000221`
   - **IFSC Code:** `UBIN0812854`
-  - **Branch:** Bukkarayasamudram (Anantapur)
+  - **Branch:** Georgepet (Anantapur)
 
 ---
 

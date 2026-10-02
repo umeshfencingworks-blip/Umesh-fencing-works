@@ -24,16 +24,18 @@ export default function PrintableDocument({
     <div
       id={id}
       ref={printRef}
-      className={`w-full max-w-[210mm] min-w-[320px] bg-white text-[#0F172A] p-4 sm:p-6 relative shadow-xl border-2 border-[#C28E3A] flex flex-col justify-between mx-auto ${className}`}
+      className={`w-[794px] min-w-[794px] max-w-[794px] bg-white text-[#0F172A] p-6 relative shadow-xl border-2 border-[#C28E3A] flex flex-col justify-between mx-auto select-text ${className}`}
       style={{
+        width: "794px",
+        minWidth: "794px",
+        maxWidth: "794px",
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-        minHeight: "282mm",
-        maxHeight: "285mm",
+        minHeight: "280mm",
+        maxHeight: "284mm",
         boxSizing: "border-box",
         textRendering: "geometricPrecision",
         WebkitFontSmoothing: "subpixel-antialiased",
         MozOsxFontSmoothing: "grayscale",
-        zoom: zoomLevel !== 100 ? `${zoomLevel}%` : undefined,
         ...style,
       }}
     >
@@ -266,7 +268,7 @@ export default function PrintableDocument({
                   Account No: <strong className="font-mono text-[#0F172A] font-bold">{business.bank?.accountNumber || "128511010000221"}</strong>
                 </div>
                 <div>
-                  Bank Name: <strong className="text-[#0F172A] font-bold">{business.bank?.name || "Union Bank of India"}, Bukkarayasamudram</strong>
+                  Bank Name: <strong className="text-[#0F172A] font-bold">{business.bank?.name || "Union Bank of India"}, {business.bank?.branch || "Georgepet"}</strong>
                 </div>
               </div>
             </div>

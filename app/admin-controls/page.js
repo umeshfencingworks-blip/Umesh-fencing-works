@@ -4,6 +4,8 @@ import React, { useState, useEffect, Suspense, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUI } from "@/context/UIContext";
 import BusinessSnapshot from "@/components/BusinessSnapshot";
+import PurchaseLedger from "@/components/PurchaseLedger";
+import ScrapAndMaterials from "@/components/ScrapAndMaterials";
 import { formatINR, BUSINESS_DETAILS } from "@/lib/calculations";
 import {
   zeroOutPortalEntries,
@@ -22,6 +24,8 @@ import {
   BookOpen,
   DollarSign,
   TrendingUp,
+  Truck,
+  Boxes,
   FileText,
   Receipt,
   Users,
@@ -63,6 +67,7 @@ function AdminControlsContent() {
     dismissUnauthorizedModal,
     primaryAdminEmail,
     loginWithGoogle,
+    loginWithPasskey,
     logoutAdmin,
     authorizedAdminEmails,
     firebaseConsoleUrl,
@@ -72,6 +77,10 @@ function AdminControlsContent() {
     customersWithStats,
     auditLogs,
     ledger,
+    purchases,
+    purchaseSummary,
+    materials,
+    inventorySummary,
     openPreview,
     openPaymentModal,
     openCustomerProfile,
@@ -85,6 +94,10 @@ function AdminControlsContent() {
   };
   const [ledgerSearch, setLedgerSearch] = useState("");
   const [paymentSearch, setPaymentSearch] = useState("");
+
+  // Direct Admin Passkey states
+  const [passkeyInput, setPasskeyInput] = useState("");
+  const [passkeyError, setPasskeyError] = useState("");
 
   // Customer Invoices & Bills Lookup States
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
@@ -118,6 +131,15 @@ function AdminControlsContent() {
       }
       if (currentPath.startsWith("/ledger")) {
         setActiveTab("financial-ledger");
+      } else if (currentPath.startsWith("/purchase-ledger") || currentPath.startsWith("/purchases")) {
+        setActiveTab("purchase-ledger");
+      } else if (
+        currentPath.startsWith("/scrap-materials") ||
+        currentPath.startsWith("/materials-scrap") ||
+        currentPath.startsWith("/materials") ||
+        currentPath.startsWith("/scrap")
+      ) {
+        setActiveTab("scrap-materials");
       } else if (currentPath.startsWith("/payments")) {
         setActiveTab("payments");
       } else if (currentPath.startsWith("/business-snapshot")) {
@@ -510,16 +532,74 @@ function AdminControlsContent() {
               <span>{isSigningIn ? "Connecting to Google..." : "Sign In with Google"}</span>
             </button>
 
+            {/* Direct Admin Passkey Entry (admin123) */}
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-[#E8E5DD]"></div>
+              <span className="flex-shrink mx-2 text-[10px] font-mono uppercase text-[#667085] font-bold">
+                Or Direct Access Key
+              </span>
+              <div className="flex-grow border-t border-[#E8E5DD]"></div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const success = loginWithPasskey(passkeyInput.trim());
+                if (!success) {
+                  setPasskeyError("Invalid key. Official admin key is admin123");
+                }
+              }}
+              className="space-y-2 text-left"
+            >
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#667085] absolute left-3 top-2.5" />
+                <input
+                  type="password"
+                  value={passkeyInput}
+                  onChange={(e) => {
+                    setPasskeyInput(e.target.value);
+                    setPasskeyError("");
+                  }}
+                  placeholder="Enter Admin Key (e.g. admin123)"
+                  className="w-full pl-9 pr-3 py-2 bg-[#FAF9F5] border border-[#DCD7CD] focus:border-[#B45309] rounded-xl text-xs font-mono tracking-wider focus:outline-hidden"
+                />
+              </div>
+              {passkeyError && (
+                <div className="text-[10px] text-red-600 font-semibold pl-1">
+                  {passkeyError}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="flex-1 py-2 px-3 rounded-xl bg-[#0E1C2F] hover:bg-[#14243B] text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Unlock className="w-3.5 h-3.5 text-[#FDE68A]" />
+                  <span>Enter Admin Room</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    loginWithPasskey("admin123");
+                  }}
+                  className="py-2 px-3 rounded-xl bg-amber-100 hover:bg-amber-200 text-[#B45309] border border-amber-300 text-xs font-bold transition-colors cursor-pointer shrink-0"
+                  title="Quick Fill & Enter with default passkey"
+                >
+                  <span>Quick Access</span>
+                </button>
+              </div>
+            </form>
+
             <div className="bg-[#FBF9F5] border border-[#E8E5DD] rounded-xl p-3 text-[11px] text-[#5A6A80] text-left space-y-1.5">
               <div className="font-bold text-[#0E1C2F] flex items-center gap-1.5">
                 <ShieldAlert className="w-3.5 h-3.5 text-[#B45309]" />
                 <span>Authorized Administrator Account:</span>
               </div>
               <div className="text-[11px] font-mono text-[#B45309] font-bold break-all bg-white px-2 py-1 rounded border border-[#E8E5DD]">
-                {primaryAdminEmail || "umeshfencingworks@gmail.com"}
+                {primaryAdminEmail || "umeshfencingworks@gmail.com"} • Key: admin123
               </div>
               <div className="text-[10px] text-[#667085] leading-snug">
-                Any other Google account will be blocked with an access denied alert.
+                Protected proprietor console with Google SSO or executive passkey.
               </div>
             </div>
           </div>
@@ -538,6 +618,8 @@ function AdminControlsContent() {
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "customer-lookup", label: "Customer Invoices & Bills", icon: Search, highlight: true },
     { id: "financial-ledger", label: "Financial Ledger", icon: BookOpen, highlight: true },
+    { id: "purchase-ledger", label: "Purchase Ledger", icon: Truck, highlight: true, badge: "RAW MATERIALS" },
+    { id: "scrap-materials", label: "Scrap & Materials", icon: Boxes, highlight: true, badge: "STOCK & SCRAP" },
     { id: "payments", label: "Payments", icon: DollarSign, highlight: true },
     { id: "snapshot", label: "Business Snapshot", icon: TrendingUp, highlight: true },
     { id: "invoices", label: "Invoices Archive", icon: FileText },
@@ -655,13 +737,22 @@ function AdminControlsContent() {
                       : "bg-[#0E1C2F] text-white shadow-xs"
                     : tab.danger
                     ? "text-red-700 hover:bg-red-50 hover:text-red-900 border border-red-200"
+                    : tab.id === "purchase-ledger"
+                    ? "text-[#B45309] bg-amber-50/80 hover:bg-amber-100 border border-amber-300/80 shadow-2xs"
                     : tab.highlight
                     ? "text-[#B45309] hover:bg-[#FEF3C7]/40"
                     : "text-[#374151] hover:bg-[#F2EFE8] hover:text-[#0E1C2F]"
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isCurrent ? (tab.danger ? "text-white" : "text-[#FDE68A]") : tab.danger ? "text-red-600" : ""}`} />
+                <Icon className={`w-3.5 h-3.5 ${isCurrent ? (tab.danger ? "text-white" : "text-[#FDE68A]") : tab.danger ? "text-red-600" : tab.id === "purchase-ledger" ? "text-[#B45309]" : ""}`} />
                 <span>{tab.label}</span>
+                {tab.badge && (
+                  <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold uppercase ${
+                    isCurrent ? "bg-[#B45309] text-white" : "bg-amber-200 text-amber-900"
+                  }`}>
+                    {tab.badge}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -721,6 +812,63 @@ function AdminControlsContent() {
                 {auditLogs.length} Security &amp; Activity Logs
               </div>
             </div>
+          </div>
+
+          {/* Raw Material Purchases & Outgoing Expenses Overview Widget */}
+          <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-[#B45309] shrink-0">
+                <Truck className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#0E1C2F]">Raw Material Purchase Ledger</h3>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-100 text-[#B45309] font-bold">
+                    {purchases?.length || 0} Bills Logged
+                  </span>
+                </div>
+                <div className="text-xs text-[#667085] mt-0.5">
+                  Total Purchases: <strong className="text-[#0E1C2F] font-mono">{formatINR(purchaseSummary?.totalExpensesAmount || 0)}</strong> • Outgoing Paid: <strong className="text-emerald-700 font-mono">{formatINR(purchaseSummary?.totalExpensesPaid || 0)}</strong> • Supplier Payables: <strong className="text-red-700 font-mono">{formatINR(purchaseSummary?.totalPendingPayables || 0)}</strong>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => handleTabChange("purchase-ledger")}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#FAF9F5] border border-[#DCD7CD] hover:bg-[#F2EFE8] text-xs font-bold text-[#0E1C2F] transition-colors shrink-0"
+            >
+              <span>Open Purchase Ledger</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#B45309]" />
+            </button>
+          </div>
+
+          {/* Scrap and Materials Bought Overview Widget */}
+          <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
+                <Boxes className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#0E1C2F]">Scrap &amp; Materials Bought</h3>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">
+                    {inventorySummary?.totalMaterialsCount || 0} Materials
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-100 text-[#B45309] font-bold">
+                    {inventorySummary?.totalScrapEntriesCount || 0} Scrap Logs
+                  </span>
+                </div>
+                <div className="text-xs text-[#667085] mt-0.5">
+                  Total Bought: <strong className="text-[#0E1C2F] font-mono">{(inventorySummary?.totalBoughtQty || 0).toLocaleString()}</strong> • Sold Out: <strong className="text-purple-700 font-mono">-{(inventorySummary?.totalSoldQty || 0).toLocaleString()}</strong> • Scrap: <strong className="text-[#B45309] font-mono">-{(inventorySummary?.totalScrapQty || 0).toLocaleString()}</strong> • In-Stock: <strong className="text-emerald-700 font-mono">{(inventorySummary?.totalInStockQty || 0).toLocaleString()}</strong>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => handleTabChange("scrap-materials")}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0E1C2F] hover:bg-[#14243B] text-xs font-bold text-white transition-colors shrink-0 shadow-xs"
+            >
+              <span>Manage Scrap &amp; Stock</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#FDE68A]" />
+            </button>
           </div>
 
           {/* Data Zero-Out & Fresh Slate Action Banner */}
@@ -1382,6 +1530,34 @@ function AdminControlsContent() {
       {/* 2. FINANCIAL LEDGER TAB */}
       {activeTab === "financial-ledger" && (
         <div className="space-y-4">
+          {/* Dual Ledger Switcher: Sales Ledger vs Purchase Ledger */}
+          <div className="bg-[#FAF9F5] border border-[#E8E5DD] rounded-xl p-3 flex items-center justify-between flex-wrap gap-3 shadow-2xs">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="px-3.5 py-1.5 rounded-lg bg-[#0E1C2F] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-[#FDE68A]" />
+                <span>Sales Ledger (Invoices & Retail Bills)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("purchase-ledger")}
+                className="px-3.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#B45309] border border-amber-300 text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer group"
+              >
+                <Truck className="w-3.5 h-3.5 text-[#B45309] group-hover:scale-110 transition-transform" />
+                <span>Purchase Ledger (Raw Materials & Suppliers)</span>
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#B45309] text-white font-bold">
+                  {purchases?.length || 0} Bills
+                </span>
+                <ArrowRight className="w-3 h-3 text-[#B45309]" />
+              </button>
+            </div>
+            <div className="text-[11px] text-[#667085] hidden md:block">
+              Switch to track factory raw material procurement, supplier GST bills &amp; outgoing expenses
+            </div>
+          </div>
+
           {/* Financial Ledger Summary Metric Banner */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-white p-4 rounded-xl border border-[#E8E5DD] shadow-2xs">
@@ -1524,6 +1700,12 @@ function AdminControlsContent() {
           </div>
         </div>
       )}
+
+      {/* 2.5 PURCHASE & MATERIAL EXPENSES LEDGER TAB */}
+      {activeTab === "purchase-ledger" && <PurchaseLedger />}
+
+      {/* 2.6 SCRAP AND MATERIALS BOUGHT TAB */}
+      {activeTab === "scrap-materials" && <ScrapAndMaterials />}
 
       {/* 3. PAYMENTS & COLLECTIONS TAB */}
       {activeTab === "payments" && (

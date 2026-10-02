@@ -165,8 +165,11 @@ th, td {
     print-color-adjust: exact !important;
   }
 
-  /* Universal print resets */
+  /* Universal print resets - highest specificity */
   .no-print,
+  .no-print *,
+  body.modal-preview-active .no-print,
+  body.modal-preview-active .no-print *,
   button,
   .app-sidebar,
   .app-topbar,
@@ -175,6 +178,11 @@ th, td {
   aside,
   footer {
     display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* --------------------------------------------------------- */
@@ -224,8 +232,7 @@ th, td {
     background: transparent !important;
   }
 
-  body.modal-preview-active .modal-scroll-container,
-  body.modal-preview-active .modal-backdrop-overlay > div > div {
+  body.modal-preview-active .modal-scroll-container {
     display: block !important;
     position: static !important;
     overflow: visible !important;
@@ -236,7 +243,33 @@ th, td {
     background: transparent !important;
   }
 
-  /* Golden Filigree Corners & Borders Preservation */
+  body.modal-preview-active .scaled-viewport-slot {
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body.modal-preview-active .screen-preview-wrapper {
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Golden Filigree Corners & Borders Preservation - Exactly 1 A4 Page */
   #printable-document {
     visibility: visible !important;
     display: flex !important;
@@ -248,19 +281,21 @@ th, td {
     width: 100% !important;
     max-width: 202mm !important;
     min-height: 278mm !important;
-    max-height: none !important;
+    max-height: 282mm !important;
     height: auto !important;
     padding: 5mm !important;
     margin: 0 auto !important;
     box-sizing: border-box !important;
     background: #FFFFFF !important;
     border: 2px solid #C28E3A !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     page-break-inside: avoid !important;
     page-break-after: avoid !important;
+    page-break-before: avoid !important;
     break-inside: avoid !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    transform: none !important;
   }
 
   #printable-document * {
