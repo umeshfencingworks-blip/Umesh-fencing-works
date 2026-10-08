@@ -8,7 +8,7 @@ import {
   AP_STATE_CODE,
   INDIAN_STATES,
 } from "@/lib/calculations";
-import { saveDocument, getNextDocumentNumber } from "@/lib/db";
+import { saveDocument, saveCustomer, getNextDocumentNumber } from "@/lib/db";
 import {
   X,
   Plus,
@@ -32,7 +32,7 @@ const QUICK_COUNTER_ITEMS = [
 ];
 
 export default function CreateBillModal() {
-  const { isBillModalOpen, closeCreateBill, openPreview, showToast, materials } = useUI();
+  const { isBillModalOpen, closeCreateBill, openPreview, showToast, materials, customers } = useUI();
 
   const [docNumber, setDocNumber] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -207,23 +207,45 @@ export default function CreateBillModal() {
 
     setIsSubmitting(true);
 
+    const cleanPhone = (customerPhone || "").replace(/\D/g, "");
+    const trimmedName = (customerName || "").trim();
+
+    // Look up if customer already exists in registry by phone or name
+    const existingCust = (customers || []).find((c) => {
+      const cPhone = (c.phone || "").replace(/\D/g, "");
+      if (cleanPhone && cleanPhone.length >= 10 && cPhone === cleanPhone) return true;
+      if (trimmedName && (c.name || c.company || "").trim().toLowerCase() === trimmedName.toLowerCase()) return true;
+      return false;
+    });
+
+    const targetCustId = existingCust
+      ? existingCust.id
+      : cleanPhone && cleanPhone.length >= 10
+      ? `CUST-${cleanPhone.slice(-6)}`
+      : `CUST-${Date.now().toString().slice(-5)}`;
+
     const counterCustomer = {
-      id: "WALK-IN",
-      name: customerName.trim() || "Walk-In Counter Customer",
-      company: customerName.trim() || "Retail Farm Purchase",
+      id: targetCustId,
+      name: trimmedName || existingCust?.name || "Counter Customer",
+      company: trimmedName || existingCust?.company || "Retail Farm Purchase",
       phone: customerPhone.trim(),
-      email: "",
-      gstin: "",
+      email: existingCust?.email || "",
+      gstin: existingCust?.gstin || "",
       billingAddress: customerAddress,
       shippingAddress: customerAddress,
       state: placeOfSupply.split(" (")[0] || "Andhra Pradesh",
       stateCode: billStateCode,
     };
 
+    // Auto-register customer into master registry & Cloud Firestore
+    try {
+      await saveCustomer(counterCustomer);
+    } catch (_) {}
+
     const payload = {
       documentType: "bill",
       documentNumber: docNumber,
-      customerId: "WALK-IN",
+      customerId: counterCustomer.id,
       customerSnapshot: counterCustomer,
       items: totals.items,
       subtotal: totals.subtotal,

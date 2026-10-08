@@ -146,8 +146,9 @@ function AdminControlsContent() {
   // Robust matching helper to associate invoices & bills with a customer
   const docMatchesCustomer = (doc, cust) => {
     if (!doc || !cust) return false;
-    if (doc.customerId && cust.id && doc.customerId === cust.id) return true;
-    if (doc.customerSnapshot?.id && cust.id && doc.customerSnapshot.id === cust.id) return true;
+    // Don't match solely on generic "WALK-IN" IDs unless phone or name actually matches
+    if (doc.customerId && cust.id && doc.customerId !== "WALK-IN" && cust.id !== "WALK-IN" && doc.customerId === cust.id) return true;
+    if (doc.customerSnapshot?.id && cust.id && doc.customerSnapshot.id !== "WALK-IN" && cust.id !== "WALK-IN" && doc.customerSnapshot.id === cust.id) return true;
 
     const custGstin = (cust.gstin || "").trim().toUpperCase();
     const docGstin = (doc.customerSnapshot?.gstin || "").trim().toUpperCase();
@@ -164,24 +165,41 @@ function AdminControlsContent() {
     return false;
   };
 
-  // All selectable customers combining registry and walk-in invoice/bill retail parties
+  // All selectable customers combining master registry and all walk-in/counter parties
   const allSelectableCustomers = useMemo(() => {
-    const list = [...(customersWithStats || [])];
+    const map = new Map();
+
+    // 1. Registered customers from master registry (loaded from Firestore customers collection)
+    (customersWithStats || []).forEach((c) => {
+      if (c && c.id) {
+        map.set(c.id, { ...c });
+      }
+    });
+
+    // 2. Also harvest walk-in or counter customers found in documents
     (documents || []).forEach((d) => {
       const snap = d.customerSnapshot;
       if (!snap) return;
       const name = (snap.company || snap.name || "").trim();
-      if (!name) return;
-      const exists = list.some((c) => docMatchesCustomer(d, c));
-      if (!exists) {
-        list.push({
-          id: d.customerId || `WALK-IN-${name.toLowerCase().replace(/[^a-z0-9]/g, "-")}`,
-          name: snap.name || name,
-          company: snap.company || "",
+      const phone = (snap.phone || "").replace(/\D/g, "");
+      if (!name && !phone) return;
+
+      const alreadyExists = Array.from(map.values()).some((c) => docMatchesCustomer(d, c));
+      if (!alreadyExists) {
+        const uniqueId = d.customerId && d.customerId !== "WALK-IN"
+          ? d.customerId
+          : phone && phone.length >= 10
+          ? `CUST-${phone.slice(-6)}`
+          : `WALK-${(name || "CUST").toLowerCase().replace(/[^a-z0-9]/g, "-")}-${d.id}`;
+
+        map.set(uniqueId, {
+          id: uniqueId,
+          name: snap.name || name || "Customer",
+          company: snap.company || name || "",
           phone: snap.phone || "",
           email: snap.email || "",
           gstin: snap.gstin || "Unregistered",
-          address: snap.address || "",
+          address: snap.billingAddress || snap.address || "",
           stateCode: snap.stateCode || "37",
           isWalkInRecord: true,
           totalInvoices: d.documentType === "invoice" ? 1 : 0,
@@ -192,7 +210,12 @@ function AdminControlsContent() {
         });
       }
     });
-    return list;
+
+    return Array.from(map.values()).sort((a, b) => {
+      const nameA = (a.company || a.name || "").toLowerCase();
+      const nameB = (b.company || b.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
   }, [customersWithStats, documents]);
 
   // Pre-select customer if customerIdParam provided in query
