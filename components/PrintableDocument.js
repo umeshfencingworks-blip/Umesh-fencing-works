@@ -106,11 +106,11 @@ export default function PrintableDocument({
         {/* Document Metadata Strip (5 equal columns) */}
         <div className="grid grid-cols-5 border-b-2 border-[#C28E3A] py-2.5 text-[11px] text-center bg-[#FDFBF7]">
           <div className="border-r border-[#CBD5E1] px-1">
-            <div className="text-[#475569] font-bold uppercase text-[10px]">Invoice No.</div>
+            <div className="text-[#475569] font-bold uppercase text-[10px]">{isInvoice ? "Invoice No." : "Bill No."}</div>
             <div className="font-mono font-black text-[#0F172A] text-[13px] mt-0.5">{doc.documentNumber}</div>
           </div>
           <div className="border-r border-[#CBD5E1] px-1">
-            <div className="text-[#475569] font-bold uppercase text-[10px]">Invoice Date</div>
+            <div className="text-[#475569] font-bold uppercase text-[10px]">{isInvoice ? "Invoice Date" : "Bill Date"}</div>
             <div className="font-bold text-[#0F172A] mt-0.5">{doc.issueDate}</div>
           </div>
           <div className="border-r border-[#CBD5E1] px-1">
@@ -118,8 +118,8 @@ export default function PrintableDocument({
             <div className="font-bold text-[#0F172A] mt-0.5">{doc.dueDate || doc.issueDate}</div>
           </div>
           <div className="border-r border-[#CBD5E1] px-1">
-            <div className="text-[#475569] font-bold uppercase text-[10px]">E-way Bill No.</div>
-            <div className="font-mono font-bold text-[#0F172A] mt-0.5">{doc.ewayBillNumber || "—"}</div>
+            <div className="text-[#475569] font-bold uppercase text-[10px]">EVA / E-Way Bill No.</div>
+            <div className="font-mono font-bold text-[#0F172A] mt-0.5">{doc.evaBillNumber || doc.ewayBillNumber || "—"}</div>
           </div>
           <div className="px-1">
             <div className="text-[#475569] font-bold uppercase text-[10px]">Vehicle No.</div>

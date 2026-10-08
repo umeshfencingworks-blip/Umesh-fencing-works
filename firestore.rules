@@ -2,24 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Umesh Fencing Works - Security Rules
-    // All authenticated staff or admin can read/write; public read restricted
-    match /customers/{customerId} {
-      allow read, write: if true; // Local-first synchronized app
-    }
-    match /documents/{documentId} {
-      allow read, write: if true;
-    }
-    match /payments/{paymentId} {
-      allow read, write: if true;
-    }
-    match /counters/{counterId} {
-      allow read, write: if true;
-    }
-    match /auditLogs/{logId} {
-      allow read, write: if true;
-    }
-    match /audit_logs/{logId} {
+    // All synchronized collections across desktop, tablet, and mobile
+    match /{document=**} {
       allow read, write: if true;
     }
   }
 }
+

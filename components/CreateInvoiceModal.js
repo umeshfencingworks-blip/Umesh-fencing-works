@@ -123,7 +123,7 @@ export default function CreateInvoiceModal() {
 
   const handleAddItem = (preset = null, fromMaterial = null) => {
     if (fromMaterial) {
-      let normalizedUnit = "Kg";
+      let normalizedUnit = fromMaterial.unit || "Kg";
       const uLower = (fromMaterial.unit || "").toLowerCase();
       if (uLower === "kg" || uLower === "kgs") normalizedUnit = "Kg";
       else if (uLower === "mtrs" || uLower === "m" || uLower === "meters") normalizedUnit = "Mtrs";
@@ -131,14 +131,22 @@ export default function CreateInvoiceModal() {
       else if (uLower === "rolls" || uLower === "roll") normalizedUnit = "Rolls";
       else if (uLower === "bundles" || uLower === "bundle") normalizedUnit = "Bundles";
       else if (uLower === "bags" || uLower === "bag") normalizedUnit = "Bags";
-      else if (uLower === "ton") normalizedUnit = "Ton";
+      else if (uLower === "ton" || uLower === "tons") normalizedUnit = "Ton";
+
+      let inferredHsn = fromMaterial.hsn || "7314";
+      const nameLower = (fromMaterial.name || "").toLowerCase();
+      if (nameLower.includes("barbed wire")) inferredHsn = "7313";
+      else if (nameLower.includes("chainlink")) inferredHsn = "7314";
+      else if (nameLower.includes("pole") || nameLower.includes("concrete") || nameLower.includes("post")) inferredHsn = "6810";
+      else if (nameLower.includes("binding") || nameLower.includes("straining") || nameLower.includes("gi wire")) inferredHsn = "7217";
+      else if (nameLower.includes("angle") || nameLower.includes("pipe")) inferredHsn = "7308";
 
       setItems((prev) => [
         ...prev,
         {
           materialId: fromMaterial.id,
           description: fromMaterial.name,
-          hsn: "7314",
+          hsn: inferredHsn,
           qty: 1,
           unit: normalizedUnit,
           rate: Number(fromMaterial.unitCost) || 0,
@@ -187,7 +195,7 @@ export default function CreateInvoiceModal() {
     const mat = (materials || []).find((m) => m.id === materialId);
     if (!mat) return;
 
-    let normalizedUnit = "Kg";
+    let normalizedUnit = mat.unit || "Kg";
     const uLower = (mat.unit || "").toLowerCase();
     if (uLower === "kg" || uLower === "kgs") normalizedUnit = "Kg";
     else if (uLower === "mtrs" || uLower === "m" || uLower === "meters") normalizedUnit = "Mtrs";
@@ -195,7 +203,15 @@ export default function CreateInvoiceModal() {
     else if (uLower === "rolls" || uLower === "roll") normalizedUnit = "Rolls";
     else if (uLower === "bundles" || uLower === "bundle") normalizedUnit = "Bundles";
     else if (uLower === "bags" || uLower === "bag") normalizedUnit = "Bags";
-    else if (uLower === "ton") normalizedUnit = "Ton";
+    else if (uLower === "ton" || uLower === "tons") normalizedUnit = "Ton";
+
+    let inferredHsn = mat.hsn || "7314";
+    const nameLower = (mat.name || "").toLowerCase();
+    if (nameLower.includes("barbed wire")) inferredHsn = "7313";
+    else if (nameLower.includes("chainlink")) inferredHsn = "7314";
+    else if (nameLower.includes("pole") || nameLower.includes("concrete") || nameLower.includes("post")) inferredHsn = "6810";
+    else if (nameLower.includes("binding") || nameLower.includes("straining") || nameLower.includes("gi wire")) inferredHsn = "7217";
+    else if (nameLower.includes("angle") || nameLower.includes("pipe")) inferredHsn = "7308";
 
     setItems((prev) => {
       const copy = [...prev];
@@ -204,8 +220,9 @@ export default function CreateInvoiceModal() {
         ...cur,
         materialId: mat.id,
         description: mat.name,
+        hsn: inferredHsn,
         unit: normalizedUnit,
-        rate: cur.rate > 0 ? cur.rate : (Number(mat.unitCost) || 0),
+        rate: Number(mat.unitCost) > 0 ? Number(mat.unitCost) : cur.rate,
       };
       return copy;
     });
@@ -273,8 +290,9 @@ export default function CreateInvoiceModal() {
       dueDate,
       paymentMethod,
       placeOfSupply,
-      vehicleNumber,
-      ewayBillNumber,
+      vehicleNumber: (vehicleNumber || "").trim(),
+      ewayBillNumber: (ewayBillNumber || "").trim(),
+      evaBillNumber: (ewayBillNumber || "").trim(),
       notes,
       initialPaymentAmount: initPay,
       paymentReference: initialPaymentRef,
@@ -442,17 +460,17 @@ export default function CreateInvoiceModal() {
                 <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">Vehicle No.</label>
                 <input
                   type="text"
-                  placeholder="AP 02 TC 8812"
+                  placeholder="e.g. AP 02 TC 8812"
                   value={vehicleNumber}
                   onChange={(e) => setVehicleNumber(e.target.value)}
                   className="w-full px-2.5 py-1.5 border border-[#DCD7CD] rounded bg-[#F7F5F0] font-mono"
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">E-Way Bill No.</label>
+                <label className="text-[10px] font-bold text-[#667085] uppercase block mb-1">EVA / E-Way Bill No.</label>
                 <input
                   type="text"
-                  placeholder="341890217645"
+                  placeholder="e.g. 341890217645 (EVA)"
                   value={ewayBillNumber}
                   onChange={(e) => setEwayBillNumber(e.target.value)}
                   className="w-full px-2.5 py-1.5 border border-[#DCD7CD] rounded bg-[#F7F5F0] font-mono"
@@ -552,10 +570,10 @@ export default function CreateInvoiceModal() {
                               onChange={(e) => handleSelectMaterialForRow(idx, e.target.value)}
                               className="w-full px-1.5 py-0.5 border border-[#E8E5DD] rounded text-[11px] bg-[#FAF9F5] text-[#344054] hover:border-[#0E1C2F] cursor-pointer"
                             >
-                              <option value="">▼ Or select from Scrap &amp; Materials ({materials.length})...</option>
+                              <option value="">▼ Select from Stock Inventory ({materials.length} items)...</option>
                               {materials.map((m) => (
                                 <option key={m.id} value={m.id}>
-                                  {m.name} — In-Stock: {m.inStock} {m.unit} {m.unitCost ? `(₹${m.unitCost})` : ""}
+                                  {m.name} [{m.category || "Stock"}] — In-Stock: {m.inStock} {m.unit} {m.unitCost ? `(₹${m.unitCost})` : ""}
                                 </option>
                               ))}
                             </select>
@@ -673,7 +691,7 @@ export default function CreateInvoiceModal() {
                     }}
                     className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-[#B45309] border border-amber-300 rounded text-xs font-bold transition-colors cursor-pointer"
                   >
-                    <option value="">+ Add Direct from Stock Materials...</option>
+                    <option value="">+ Add Direct from Stock Inventory ({materials.length} items)...</option>
                     {materials.map((m) => (
                       <option key={m.id} value={m.id}>
                         + {m.name} (Stock: {m.inStock} {m.unit})

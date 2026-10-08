@@ -43,10 +43,14 @@ export default function BillsView({ autoOpenCreate = false }) {
       const docNum = (b.documentNumber || "").toLowerCase();
       const name = (b.customerSnapshot?.name || "").toLowerCase();
       const phone = (b.customerSnapshot?.phone || "");
+      const vehicle = (b.vehicleNumber || "").toLowerCase();
+      const eway = (b.ewayBillNumber || b.evaBillNumber || "").toLowerCase();
       return (
         docNum.includes(q) ||
         name.includes(q) ||
-        phone.includes(q)
+        phone.includes(q) ||
+        vehicle.includes(q) ||
+        eway.includes(q)
       );
     });
   }, [bills, search]);
@@ -152,6 +156,13 @@ export default function BillsView({ autoOpenCreate = false }) {
                         {b.customerSnapshot?.phone && (
                           <div className="text-[10px] font-mono text-[#667085]">
                             {b.customerSnapshot.phone}
+                          </div>
+                        )}
+                        {(b.vehicleNumber || b.evaBillNumber || b.ewayBillNumber) && (
+                          <div className="text-[10px] font-mono text-[#B45309] font-medium mt-0.5">
+                            {b.vehicleNumber ? `Veh: ${b.vehicleNumber}` : ""}
+                            {b.vehicleNumber && (b.evaBillNumber || b.ewayBillNumber) ? " • " : ""}
+                            {(b.evaBillNumber || b.ewayBillNumber) ? `EVA: ${b.evaBillNumber || b.ewayBillNumber}` : ""}
                           </div>
                         )}
                       </td>
