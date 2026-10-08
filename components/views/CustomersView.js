@@ -26,6 +26,10 @@ export default function CustomersView() {
     openCustomerProfile,
     openCreateInvoice,
     showToast,
+    dbLoading,
+    syncStatus,
+    syncError,
+    retryCloudSync,
   } = useUI();
 
   const [search, setSearch] = useState("");
@@ -116,10 +120,36 @@ export default function CustomersView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E8E5DD]">
-              {filtered.length === 0 ? (
+              {dbLoading && customersWithStats.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-12 text-xs text-[#1E40AF]">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-[#1E40AF] border-t-transparent rounded-full animate-spin"></div>
+                      <span className="font-semibold">Loading customer registry from cloud...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : syncStatus === "error" && customersWithStats.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-12 text-xs text-red-700">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <span className="font-semibold">Unable to load customers from cloud.</span>
+                      <button
+                        type="button"
+                        onClick={() => retryCloudSync && retryCloudSync()}
+                        className="px-3 py-1 rounded bg-red-100 hover:bg-red-200 text-red-800 text-[11px] font-bold cursor-pointer"
+                      >
+                        Retry Sync
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center py-8 text-xs text-[#667085]">
-                    No clients found.
+                    {search
+                      ? "No clients found matching your search."
+                      : "No clients registered yet. Clients are auto-registered upon creating an invoice or bill, or via '+ New Client'."}
                   </td>
                 </tr>
               ) : (

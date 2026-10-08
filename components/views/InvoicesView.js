@@ -28,6 +28,10 @@ export default function InvoicesView({ autoOpenCreate = false }) {
     openCustomerProfile,
     openWhatsAppModal,
     showToast,
+    dbLoading,
+    syncStatus,
+    syncError,
+    retryCloudSync,
   } = useUI();
 
   const [search, setSearch] = useState("");
@@ -153,10 +157,36 @@ export default function InvoicesView({ autoOpenCreate = false }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E8E5DD]">
-              {filteredInvoices.length === 0 ? (
+              {dbLoading && invoices.length === 0 ? (
+                <tr>
+                  <td colSpan="9" className="text-center py-12 text-xs text-[#1E40AF]">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-[#1E40AF] border-t-transparent rounded-full animate-spin"></div>
+                      <span className="font-semibold">Loading your UFW invoices from cloud...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : syncStatus === "error" && invoices.length === 0 ? (
+                <tr>
+                  <td colSpan="9" className="text-center py-12 text-xs text-red-700">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <span className="font-semibold">Unable to load invoices from cloud.</span>
+                      <button
+                        type="button"
+                        onClick={() => retryCloudSync && retryCloudSync()}
+                        className="px-3 py-1 rounded bg-red-100 hover:bg-red-200 text-red-800 text-[11px] font-bold cursor-pointer"
+                      >
+                        Retry Sync
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredInvoices.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="text-center py-8 text-xs text-[#667085]">
-                    No invoices found matching your filter criteria.
+                    {search || statusFilter !== "all"
+                      ? "No invoices found matching your filter criteria."
+                      : "No tax invoices created yet. Click '+ Tax Invoice' above to generate one."}
                   </td>
                 </tr>
               ) : (

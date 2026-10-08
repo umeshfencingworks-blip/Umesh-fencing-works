@@ -57,7 +57,7 @@ export default function RecordPaymentModal() {
       closePaymentModal();
     } catch (err) {
       console.error(err);
-      showToast("Error recording payment. Please try again.", "error");
+      showToast(err.message || "Error recording payment. Please try again.", "error");
     }
   };
 

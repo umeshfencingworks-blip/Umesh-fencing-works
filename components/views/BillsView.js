@@ -23,6 +23,10 @@ export default function BillsView({ autoOpenCreate = false }) {
     openPreview,
     openWhatsAppModal,
     showToast,
+    dbLoading,
+    syncStatus,
+    syncError,
+    retryCloudSync,
   } = useUI();
 
   const [search, setSearch] = useState("");
@@ -130,10 +134,36 @@ export default function BillsView({ autoOpenCreate = false }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E8E5DD]">
-              {filteredBills.length === 0 ? (
+              {dbLoading && bills.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-12 text-xs text-[#1E40AF]">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-[#1E40AF] border-t-transparent rounded-full animate-spin"></div>
+                      <span className="font-semibold">Loading your UFW bills from cloud...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : syncStatus === "error" && bills.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-12 text-xs text-red-700">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <span className="font-semibold">Unable to load bills from cloud.</span>
+                      <button
+                        type="button"
+                        onClick={() => retryCloudSync && retryCloudSync()}
+                        className="px-3 py-1 rounded bg-red-100 hover:bg-red-200 text-red-800 text-[11px] font-bold cursor-pointer"
+                      >
+                        Retry Sync
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredBills.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center py-8 text-xs text-[#667085]">
-                    No counter bills found.
+                    {search
+                      ? "No counter bills found matching your filter criteria."
+                      : "No counter bills created yet. Click '+ Counter Bill' above to generate one."}
                   </td>
                 </tr>
               ) : (

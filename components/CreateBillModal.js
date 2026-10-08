@@ -281,7 +281,7 @@ export default function CreateBillModal() {
       openPreview(savedDoc);
     } catch (err) {
       console.error(err);
-      showToast("Failed to save bill. Please try again.", "error");
+      showToast(err.message || "Failed to save bill. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }

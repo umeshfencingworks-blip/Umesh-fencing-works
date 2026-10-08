@@ -305,7 +305,7 @@ export default function CreateInvoiceModal() {
       openPreview(savedDoc);
     } catch (err) {
       console.error(err);
-      showToast("Failed to save invoice. Please try again.", "error");
+      showToast(err.message || "Failed to save invoice. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
