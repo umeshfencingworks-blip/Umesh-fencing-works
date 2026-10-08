@@ -29,11 +29,6 @@ import {
   exportMaterialsAndScrapCSV,
   pushAllToFirestore,
   seedFirestoreDummyEntries,
-  getCloudSyncStatus,
-  subscribeToSyncStatus,
-  teardownFirestoreRealtimeSync,
-  retryCloudSync,
-  isDatabaseLoading,
 } from "@/lib/db";
 import {
   auth,
@@ -60,12 +55,7 @@ export function UIProvider({ children }) {
 
   // DB & State Synchronization
   const [dbReady, setDbReady] = useState(false);
-  const [dbLoading, setDbLoading] = useState(true);
   const [dbTick, setDbTick] = useState(0);
-
-  // Cloud Synchronization Status ("connected" | "syncing" | "synced" | "offline" | "error")
-  const [syncStatus, setSyncStatus] = useState("connected");
-  const [syncError, setSyncError] = useState(null);
 
   // Admin Auth State (Firebase Google Authentication)
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -95,30 +85,17 @@ export function UIProvider({ children }) {
   const [whatsAppDocument, setWhatsAppDocument] = useState(null);
 
 
-  // Initialize DB and Firebase Auth Listener on Mount with Strict Startup Order
+  // Initialize DB and Firebase Auth Listener on Mount
   useEffect(() => {
-    // 1. Subscribe to local DB updates
+    initializeDatabase().then(() => {
+      setDbReady(true);
+    });
+
     const unsubscribeDb = subscribeToDb(() => {
       setDbTick((prev) => prev + 1);
     });
 
-    // 2. Subscribe to Cloud Sync status changes
-    const initialSync = getCloudSyncStatus();
-    setSyncStatus(initialSync.status);
-    setSyncError(initialSync.error);
-
-    const unsubscribeSync = subscribeToSyncStatus((status, err) => {
-      setSyncStatus(status);
-      setSyncError(err);
-    });
-
-    // 3. Instant local load (0ms paint for existing records)
-    initializeDatabase().then(() => {
-      setDbReady(true);
-      setDbLoading(isDatabaseLoading());
-      setDbTick((prev) => prev + 1);
-    });
-
+    // Check localStorage cached admin session first
     if (typeof window !== "undefined") {
       const cachedAuth = localStorage.getItem("ufw_admin_auth");
       const cachedEmail = localStorage.getItem("ufw_admin_email");
@@ -128,16 +105,11 @@ export function UIProvider({ children }) {
       }
     }
 
-    // Safety timeout: Ensure dbLoading NEVER remains true for more than 4.5s
-    const safetyTimer = setTimeout(() => {
-      setDbLoading(false);
-    }, 4500);
-
-    // 4. Derive authoritative authentication state directly from Firebase Auth
+    // Listen to Firebase Auth state changes
     let unsubscribeAuth = () => {};
     if (auth) {
       try {
-        unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+        unsubscribeAuth = onAuthStateChanged(auth, (user) => {
           if (user && isAuthorizedAdminEmail(user.email)) {
             setIsAdminAuthenticated(true);
             setAdminUser(user);
@@ -145,39 +117,19 @@ export function UIProvider({ children }) {
               localStorage.setItem("ufw_admin_auth", "true");
               localStorage.setItem("ufw_admin_email", user.email);
             }
-            setAdminAuthLoading(false);
-
-            // Establish Firestore access, perform authoritative cold-start cloud fetch & start listeners
-            try {
-              await initializeDatabase({ user, forceRefresh: true });
-              setDbReady(true);
-            } catch (initErr) {
-              console.error("[Firestore Initialization Exception]:", initErr);
-            } finally {
-              setDbLoading(false);
-            }
-          } else {
-            setIsAdminAuthenticated(false);
-            setAdminUser(null);
-            setAdminAuthLoading(false);
-            setDbLoading(false);
-            teardownFirestoreRealtimeSync();
           }
+          setAdminAuthLoading(false);
         });
       } catch (e) {
         console.warn("Firebase Auth listener error:", e);
         setAdminAuthLoading(false);
-        setDbLoading(false);
       }
     } else {
       setAdminAuthLoading(false);
-      setDbLoading(false);
     }
 
     return () => {
-      clearTimeout(safetyTimer);
       unsubscribeDb();
-      unsubscribeSync();
       unsubscribeAuth();
     };
   }, []);
@@ -276,7 +228,6 @@ export function UIProvider({ children }) {
   // Admin Logout - Automatically redirects to customer web portal (landing page)
   const logoutAdmin = useCallback(async () => {
     try {
-      teardownFirestoreRealtimeSync();
       await logoutAdminAuth();
       setIsAdminAuthenticated(false);
       setAdminUser(null);
@@ -492,12 +443,7 @@ export function UIProvider({ children }) {
     setCurrentPath,
     navigate,
     dbReady,
-    dbLoading,
-    isDbLoading: dbLoading,
     dbTick,
-    syncStatus,
-    syncError,
-    retryCloudSync,
     metrics,
     documents,
     customers,

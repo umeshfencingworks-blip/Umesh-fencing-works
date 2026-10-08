@@ -37,9 +37,6 @@ export default function Topbar() {
     openCreateBill,
     isAdminAuthenticated,
     logoutAdmin,
-    syncStatus,
-    syncError,
-    retryCloudSync,
   } = useUI();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -110,36 +107,9 @@ export default function Topbar() {
               <span>Direct Manufacturer • Factory Rates</span>
             </div>
           ) : (
-            <div className="hidden md:flex items-center">
-              {syncStatus === "syncing" && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EFF6FF] text-[#1E40AF] text-[11px] font-medium border border-[#BFDBFE] shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] animate-ping"></span>
-                  <span>Syncing with Cloud...</span>
-                </div>
-              )}
-              {(syncStatus === "connected" || syncStatus === "synced") && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-medium border border-[#BBF7D0] shrink-0" title="Firestore Cloud is live and synchronized across devices">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
-                  <span>Cloud Synced • Live</span>
-                </div>
-              )}
-              {syncStatus === "offline" && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] text-[11px] font-medium border border-[#FDE68A] shrink-0" title="Offline mode: Data stored locally and will sync when internet returns">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]"></span>
-                  <span>Offline • Local Cache</span>
-                </div>
-              )}
-              {syncStatus === "error" && (
-                <button
-                  type="button"
-                  onClick={() => retryCloudSync && retryCloudSync()}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEE2E2] text-[#991B1B] text-[11px] font-medium border border-[#FECACA] shrink-0 hover:bg-[#FCA5A5] transition-colors cursor-pointer"
-                  title={syncError ? `Sync Error: ${syncError}. Click to retry.` : "Cloud synchronization failed. Click to retry."}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse"></span>
-                  <span>Sync Error • Retry</span>
-                </button>
-              )}
+            <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-medium border border-[#BBF7D0] shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse"></span>
+              <span>Secure Local Financial Ledger • Active</span>
             </div>
           )}
         </div>
@@ -384,16 +354,8 @@ export default function Topbar() {
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-wider text-[#B45309] px-2 mb-2 font-mono flex items-center justify-between">
                       <span>Admin Management Portal</span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                        syncStatus === 'syncing' ? 'bg-blue-100 text-blue-700' :
-                        syncStatus === 'error' ? 'bg-red-100 text-red-700' :
-                        syncStatus === 'offline' ? 'bg-amber-100 text-amber-700' :
-                        'bg-emerald-100 text-emerald-700'
-                      }`}>
-                        {syncStatus === 'syncing' ? 'Syncing...' :
-                         syncStatus === 'error' ? 'Sync Error' :
-                         syncStatus === 'offline' ? 'Offline' :
-                         'Cloud Synced'}
+                      <span className="text-[9px] text-emerald-700 font-bold px-1.5 py-0.5 rounded bg-emerald-100">
+                        Authenticated
                       </span>
                     </div>
                     <nav className="space-y-1">

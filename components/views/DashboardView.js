@@ -29,10 +29,6 @@ export default function DashboardView() {
     openCustomerModal,
     openPreview,
     openPaymentModal,
-    dbLoading,
-    syncStatus,
-    syncError,
-    retryCloudSync,
   } = useUI();
 
   const recentInvoices = documents
@@ -79,30 +75,6 @@ export default function DashboardView() {
           </button>
         </div>
       </div>
-
-      {/* Cloud Hydration / Sync State Banner */}
-      {dbLoading && documents.length === 0 && (
-        <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 text-center flex flex-col items-center justify-center space-y-1.5 animate-pulse">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-900">
-            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span>Loading your UFW data from Firestore Cloud...</span>
-          </div>
-          <p className="text-[11px] text-blue-700">Synchronizing invoices, counter bills, client balances, and ledgers across devices.</p>
-        </div>
-      )}
-      {syncStatus === "error" && documents.length === 0 && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-center flex flex-col items-center justify-center space-y-2">
-          <div className="text-xs font-bold text-red-900">Unable to load cloud data</div>
-          <p className="text-[11px] text-red-700">{syncError || "Please check your network connection and ensure Firestore rules are deployed."}</p>
-          <button
-            type="button"
-            onClick={() => retryCloudSync && retryCloudSync()}
-            className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold cursor-pointer"
-          >
-            Retry Cloud Sync
-          </button>
-        </div>
-      )}
 
       {/* Operational Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

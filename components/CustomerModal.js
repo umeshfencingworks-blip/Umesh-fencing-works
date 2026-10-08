@@ -85,7 +85,7 @@ export default function CustomerModal() {
       closeCustomerModal();
     } catch (err) {
       console.error(err);
-      showToast(err.message || "Failed to save customer. Please try again.", "error");
+      showToast("Failed to save customer. Please try again.", "error");
     }
   };
 
