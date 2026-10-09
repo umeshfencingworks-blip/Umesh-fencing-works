@@ -36,7 +36,6 @@ export default function Sidebar() {
     { label: "Customer Lookup", href: "/admin-controls?tab=customer-lookup", tab: "customer-lookup", icon: Search },
     { label: "Payment Inflows", href: "/admin-controls?tab=payments", tab: "payments", icon: DollarSign },
     { label: "Executive Snapshot", href: "/admin-controls?tab=snapshot", tab: "snapshot", icon: TrendingUp },
-    { label: "Zero Out Entries", href: "/admin-controls?tab=danger-zone", tab: "danger-zone", icon: Trash2, danger: true },
   ];
 
   const isItemActive = (item) => {

@@ -1,11 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Umesh Fencing Works - Security Rules
-    // All synchronized collections across desktop, tablet, and mobile
+    // Only the signed-in admin account may read or write business data
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() == 'umeshfencingworks@gmail.com';
     }
   }
 }
-

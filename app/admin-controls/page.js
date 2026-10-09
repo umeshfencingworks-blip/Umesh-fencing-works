@@ -589,7 +589,6 @@ function AdminControlsContent() {
     { id: "reports", label: "Overdue Accounts", icon: AlertTriangle },
     { id: "activity", label: "Audit Logs", icon: History },
     { id: "system", label: "Financial Reports", icon: FileSpreadsheet, highlight: true },
-    { id: "danger-zone", label: "Zero Out Entries", icon: Trash2, danger: true },
   ];
 
   return (
@@ -639,18 +638,6 @@ function AdminControlsContent() {
           >
             <FileCode className="w-3.5 h-3.5 text-[#FDE68A]" />
             <span>Export XML</span>
-          </button>
-          <button
-            onClick={() => {
-              setZeroOutError("");
-              setZeroOutKeyInput("");
-              setShowZeroOutModal(true);
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-red-950/80 hover:bg-red-900 text-xs font-semibold text-red-200 border border-red-700/60 transition-colors"
-            title="Zero out local portal entries with Admin Key"
-          >
-            <Trash2 className="w-3.5 h-3.5 text-red-400" />
-            <span>Zero Out Entries</span>
           </button>
           <div className="flex items-center gap-2 pt-2 sm:pt-0 sm:pl-2 border-t sm:border-t-0 sm:border-l border-slate-700 w-full sm:w-auto justify-between sm:justify-start">
             {adminUser?.photoURL && (
@@ -828,37 +815,6 @@ function AdminControlsContent() {
             >
               <span>Manage Scrap &amp; Stock</span>
               <ArrowRight className="w-3.5 h-3.5 text-[#FDE68A]" />
-            </button>
-          </div>
-
-          {/* Data Zero-Out & Fresh Slate Action Banner */}
-          <div className="bg-red-50/70 border-2 border-red-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-red-100 border border-red-300 flex items-center justify-center text-red-700 shrink-0 mt-0.5">
-                <Trash2 className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-red-900 font-sans">Zero Out Portal Entries (Danger Zone)</h3>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-200 text-red-800 font-bold border border-red-300">
-                    Admin Key Required
-                  </span>
-                </div>
-                <p className="text-xs text-red-700 mt-1 max-w-xl leading-relaxed">
-                  Need to erase test billing records or start with a clean slate? This action will zero out all local tax invoices, retail bills, payment receipts, and sequence counters from <strong>this browser portal</strong>. Customer registry can optionally be preserved.
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                setZeroOutError("");
-                setZeroOutKeyInput("");
-                setShowZeroOutModal(true);
-              }}
-              className="px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 shrink-0 transition-all hover:shadow"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>Zero Out Local Entries</span>
             </button>
           </div>
 
@@ -2145,171 +2101,6 @@ function AdminControlsContent() {
                 <Printer className="w-3.5 h-3.5" />
                 <span>Print / Save as PDF (.pdf)</span>
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 12. DANGER ZONE TAB */}
-      {activeTab === "danger-zone" && (
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-red-200 shadow-sm space-y-6 text-xs">
-            <div className="flex items-center gap-3 pb-4 border-b border-red-100">
-              <div className="w-12 h-12 rounded-xl bg-red-100 border-2 border-red-300 flex items-center justify-center text-red-700 shrink-0">
-                <AlertOctagon className="w-6 h-6" />
-              </div>
-              <div>
-                <h2 className="text-base font-bold text-red-950 font-serif">
-                  Portal Data Erasure &amp; Sequence Reset
-                </h2>
-                <p className="text-xs text-red-700 mt-0.5">
-                  Secure local data purge and document sequence counter reset for Umesh Fencing Works administrative control.
-                </p>
-              </div>
-            </div>
-
-            {/* Scope of Zero-Out */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                <span className="font-bold text-slate-900 block text-xs">What will be Zeroed Out Locally:</span>
-                <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-700">
-                  <li>All GST Tax Invoices in this portal (cleared)</li>
-                  <li>All Retail Counter Bills in this portal (cleared)</li>
-                  <li>All Payment receipts &amp; collections in this portal (cleared)</li>
-                  <li>Invoice Counter reset to <code className="bg-slate-200 px-1 py-0.5 rounded font-mono">UFW-INV-0001</code></li>
-                  <li>Retail Bill Counter reset to <code className="bg-slate-200 px-1 py-0.5 rounded font-mono">UFW-BILL-0001</code></li>
-                  <li>Local Financial Ledger balances reset to ₹0.00</li>
-                </ul>
-              </div>
-
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                <span className="font-bold text-slate-900 block text-xs">Administrative Guarantees:</span>
-                <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-700">
-                  <li>Proprietor and GST configuration remain intact</li>
-                  <li>Customer master registry can optionally be preserved</li>
-                  <li>Reset numbering counters restart from #0001 cleanly</li>
-                  <li>Requires authorized Admin Portal Key (<code className="font-mono font-bold">admin123</code>)</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Action Bar */}
-            <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs text-slate-700">
-                Requires entering the Admin Portal Key (<code className="font-bold text-slate-900">admin123</code>) to confirm.
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setZeroOutError("");
-                    setZeroOutKeyInput("");
-                    setShowZeroOutModal(true);
-                  }}
-                  className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md flex items-center gap-2 transition-all hover:shadow-lg"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Authorize &amp; Zero Out Portal Entries</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Zero Out Confirmation Modal (Requires Admin Portal Key) */}
-      {showZeroOutModal && (
-        <div className="fixed inset-0 z-60 overflow-y-auto bg-black/70 flex items-center justify-center p-3 sm:p-4">
-          <div className="relative w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden border-2 border-red-500 my-auto">
-            {/* Modal Header */}
-            <div className="bg-red-950 text-white px-5 py-3.5 border-b border-red-800 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-red-800 flex items-center justify-center text-red-200 shrink-0">
-                  <AlertOctagon className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold leading-tight">Zero Out Portal Entries</h3>
-                  <p className="text-[11px] text-red-300">Local Browser Device Storage Erasure</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowZeroOutModal(false)}
-                className="text-red-300 hover:text-white p-1 rounded transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-5 space-y-4 text-xs">
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-1.5 text-red-900">
-                <span className="font-bold block text-red-800">The following entries will be zeroed out in this portal:</span>
-                <ul className="list-disc list-inside space-y-0.5 text-[11px] text-red-700 font-medium">
-                  <li>All GST Commercial Tax Invoices (Reset to 0)</li>
-                  <li>All Retail &amp; Counter Bills (Reset to 0)</li>
-                  <li>All Payment Records &amp; Receipts (Reset to 0)</li>
-                  <li>Invoice sequence counter reset to <code className="bg-red-100 px-1 py-0.5 rounded font-mono">UFW-INV-0001</code></li>
-                  <li>Retail bill sequence counter reset to <code className="bg-red-100 px-1 py-0.5 rounded font-mono">UFW-BILL-0001</code></li>
-                  <li>Financial Ledger balances reset to ₹0.00</li>
-                </ul>
-              </div>
-
-              <label className="flex items-center gap-2.5 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer text-slate-800 select-none">
-                <input
-                  type="checkbox"
-                  checked={wipeCustomers}
-                  onChange={(e) => setWipeCustomers(e.target.checked)}
-                  className="w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300"
-                />
-                <div className="text-xs">
-                  <span className="font-semibold block text-slate-900">Also wipe registered customer registry</span>
-                  <span className="text-[10px] text-slate-500">Leave unchecked to keep customer contacts with reset ₹0 order balances</span>
-                </div>
-              </label>
-
-              {zeroOutError && (
-                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md font-medium text-xs flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{zeroOutError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleZeroOutSubmit} className="space-y-3 pt-2">
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase font-mono mb-1">
-                    Enter Admin Portal Key to Authorize:
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Type Admin Key (e.g. admin123)"
-                    value={zeroOutKeyInput}
-                    onChange={(e) => setZeroOutKeyInput(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-300 focus:border-red-600 focus:bg-white rounded-lg text-sm font-mono font-bold outline-hidden tracking-wider text-slate-900"
-                    autoFocus
-                    required
-                  />
-                  <span className="text-[10px] text-slate-500 mt-0.5 block font-mono">
-                    Administrative key confirmation required before executing local purge.
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setShowZeroOutModal(false)}
-                    className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={zeroOutLoading}
-                    className="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>{zeroOutLoading ? "Zeroing Out..." : "Confirm & Zero Out Portal Entries"}</span>
-                  </button>
-                </div>
-              </form>
             </div>
           </div>
         </div>

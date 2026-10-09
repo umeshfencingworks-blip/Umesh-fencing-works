@@ -22,49 +22,64 @@ Built with **Next.js App Router**, **React**, **Tailwind CSS**, **Local-First Ze
 
 ---
 
-## ⚡ Key Architectural Highlights
+## ✨ Features
 
-1. **Zero-Latency Local-First Engine (`lib/db.js`)**:
-   - Synchronous 0ms reads via in-memory caching and IndexedDB (`ufw_next_business_db`).
-   - Seamless background cloud synchronization with Cloud Firestore.
-   - Initial Seed Dataset pre-loaded with commercial customers, tax invoices, counter bills, and audit logs.
-   - One-Click **"Push Local Data to Cloud Firestore"** batch synchronization button.
-   - Portable **JSON Export/Import** for full offline backup and instant multi-device restoration.
+### Billing & Invoicing
+- **GST Tax Invoices (B2B):** auto CGST+SGST (9%+9%) for Andhra Pradesh, IGST (18%) for inter-state, GSTIN state-code detection.
+- **Retail & Counter Bills (POS):** fast cash/UPI bills for farmers and local contractors.
+- Automatic numbering (`UFW-INV-xxxx`, `UFW-BILL-xxxx`), round-off, amount in words (`Rupees ... Only`).
+- Print-ready A4 preview with bank details, terms and signatory; PDF download.
+- **WhatsApp sharing** of invoices/bills.
+- Void or delete documents with audit trail.
 
-2. **Full Andhra Pradesh GST Mathematical Engine (`lib/calculations.js`)**:
-   - Intra-state (AP State 37): **CGST (9%) + SGST (9%)** separation.
-   - Inter-state (e.g., Karnataka 29, Telangana 36): **IGST (18%)**.
-   - Automatic GSTIN 2-digit state code extraction.
-   - Round-off calculations and Indian numbering words generation (`Rupees ... Only`).
-   - Atomic sequence numbering: `UFW-INV-xxxx` and `UFW-BILL-xxxx`.
+### Customers & Payments
+- **Customer Registry** with GSTIN validation and a 360° customer profile (history, balances).
+- **Record payments** against invoices/bills; outstanding balance tracking.
+- Payment inflows register.
 
-3. **Strict A4 Single-Page Guarantee (`components/DocumentPreviewModal.js`)**:
-   - Clamped to `285mm` max height with `@media print` zero-overflow guarantee.
-   - Classical ornate security borders with decorative corner flourishes.
-   - Complete legal terms, official bank account remittance details, and authorized signatory.
+### Admin Command Center (`/admin-controls`)
+- **Financial Ledger** — unified receivables ledger.
+- **Purchase Ledger** — supplier purchases, purchase payments, expenses.
+- **Scrap & Materials** — stock catalog, restocking, stock sales, scrap/wastage register.
+- **Customer Lookup**, **Payment Inflows**, **Executive Snapshot** (business KPIs), **GST Taxes** summary.
+- **Exports:** financial report (CSV/XML), purchase ledger CSV, materials & scrap CSV.
 
-4. **Protected Financial Controls (`/admin-controls`)**:
-   - Gated by administrative access key: `admin123`.
-   - Protects confidential financial ledgers, payment inflow tracking, and executive business snapshots from public view.
-   - Automatic redirects from `/ledger`, `/payments`, and `/business-snapshot` to the gated Admin Command Center.
+### Dashboard
+- Operational Desk with receivables metrics, recent documents and quick actions.
 
-5. **Smooth 200ms GPU-Accelerated Route Transitions**:
-   - Lightweight CSS animation (`routeEnter`) running on the GPU without blocking render pipelines.
+### Security
+- Google Sign-In restricted to `umeshfencingworks@gmail.com`.
+- Admin area additionally gated by access key.
+- Firestore rules allow read/write only for the signed-in admin.
+
+### Data & Sync
+- **Local-first:** instant reads from memory, localStorage and IndexedDB; works offline.
+- **Cloud Firestore real-time sync** across all devices after sign-in.
+- First sign-in on a device uploads any local-only records to the cloud.
+- Manual "Push Local Data to Cloud" option.
 
 ---
 
-## 🗺️ Application Routing Structure
+## 🗺️ Routes
 
 | Route | Description |
 |---|---|
-| `/` | **Landing Portal** with verified business credentials, feature cards, and compliance highlights. |
-| `/dashboard` | **Operational Desk** with receivables metrics, recent dispatches, and quick actions. |
-| `/invoices` | **GST Tax Invoices** (B2B register, tax calculation, balance tracking, print preview). |
-| `/invoices/create` | Instant subroute launcher for the Tax Invoice creator modal. |
-| `/bills` | **Retail & Counter Bills** (POS desk for cash/UPI counter sales with farmers and local contractors). |
-| `/bills/create` | Instant subroute launcher for the Counter Bill creator modal. |
-| `/customers` | **Customer Registry** with GSTIN validation, commercial standing, and Profile 360°. |
-| `/admin-controls` | **Admin Command Center** (Key: `admin123`) containing the Financial Ledger, Payments & Collections, Business Snapshot, GST Taxes, and Cloud Sync tools. |
+| `/` | Landing page and sign-in |
+| `/dashboard` | Operational Desk |
+| `/invoices`, `/invoices/create` | GST Tax Invoices |
+| `/bills`, `/bills/create` | Retail & Counter Bills |
+| `/customers` | Customer Registry |
+| `/admin-controls` | Admin Command Center (tabs listed above) |
+| `/ledger`, `/payments`, `/business-snapshot`, `/purchases`, `/purchase-ledger`, `/scrap-materials` | Redirect into the matching Admin tab |
+
+---
+
+## ☁️ Firebase Setup
+
+- Firestore database ID is **`default`** (not `(default)`).
+- Publish `firestore.rules` in Firebase Console → Firestore → `default` → Rules.
+- Enable Google sign-in under Authentication → Sign-in method.
+- Config can be overridden via `NEXT_PUBLIC_FIREBASE_*` env vars (see `.env.example`).
 
 ---
 
@@ -92,5 +107,5 @@ Admin Access Key: `admin123`
 ## 📖 System Architecture & Database Documentation
 
 For in-depth architectural details, SQLite DDL schemas, Cloud Firestore collection definitions, and the 2-year auditability framework, refer to:
-- [System Architecture & Database Specification (ARCHITECTURE.md)](file:///c:/Users/ADITYA/OneDrive/Desktop/CODE/UFW/ARCHITECTURE.md)
+- [System Architecture & Database Specification (ARCHITECTURE.md)](ARCHITECTURE.md)
 
