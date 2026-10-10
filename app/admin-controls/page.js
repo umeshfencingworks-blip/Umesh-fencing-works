@@ -369,6 +369,22 @@ function AdminControlsContent() {
     showToast(`Statement exported as .csv for ${cust.company || cust.name}`, "success");
   };
 
+  const handleDeletePayment = async (payment) => {
+    if (!window.confirm(`Permanently delete payment receipt ${payment.id} (${formatINR(payment.amount)})? This will update the linked document's balance.`)) return;
+
+    try {
+      const deletedPayment = await deletePayment(payment.id);
+      if (!deletedPayment) {
+        showToast("Payment receipt no longer exists.", "error");
+        return;
+      }
+      showToast(`Payment receipt ${payment.id} deleted.`, "success");
+    } catch (err) {
+      console.error("Failed to delete payment:", err);
+      showToast("Failed to delete payment.", "error");
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true);
     try {
